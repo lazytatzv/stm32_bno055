@@ -24,6 +24,7 @@
 #include "bno055.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -168,45 +169,57 @@ int main(void)
     
     // Read Euler angles (orientation)
     if (BNO055_ReadEuler(&hi2c1, &euler_data) == HAL_OK) {
-      float heading = euler_data.x / 16.0;
-      float roll = euler_data.y / 16.0;
-      float pitch = euler_data.z / 16.0;
+      int16_t heading = euler_data.x / 16;
+      int16_t roll = euler_data.y / 16;
+      int16_t pitch = euler_data.z / 16;
+      int16_t h_dec = ((euler_data.x % 16) * 100) / 16;
+      int16_t r_dec = ((euler_data.y % 16) * 100) / 16;
+      int16_t p_dec = ((euler_data.z % 16) * 100) / 16;
       
-      sprintf(uart_buf, "Euler - H:%.2f R:%.2f P:%.2f\r\n", 
-              heading, roll, pitch);
+      sprintf(uart_buf, "Euler - H:%d.%02d R:%d.%02d P:%d.%02d deg\r\n", 
+              heading, h_dec, roll, r_dec, pitch, p_dec);
       HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
     }
     
     // Read accelerometer data
     if (BNO055_ReadAccel(&hi2c1, &accel_data) == HAL_OK) {
-      float ax = accel_data.x / 100.0;
-      float ay = accel_data.y / 100.0;
-      float az = accel_data.z / 100.0;
+      int16_t ax = accel_data.x / 100;
+      int16_t ay = accel_data.y / 100;
+      int16_t az = accel_data.z / 100;
+      int16_t ax_dec = abs((accel_data.x % 100));
+      int16_t ay_dec = abs((accel_data.y % 100));
+      int16_t az_dec = abs((accel_data.z % 100));
       
-      sprintf(uart_buf, "Accel - X:%.2f Y:%.2f Z:%.2f m/s2\r\n", 
-              ax, ay, az);
+      sprintf(uart_buf, "Accel - X:%d.%02d Y:%d.%02d Z:%d.%02d m/s2\r\n", 
+              ax, ax_dec, ay, ay_dec, az, az_dec);
       HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
     }
     
     // Read gyroscope data
     if (BNO055_ReadGyro(&hi2c1, &gyro_data) == HAL_OK) {
-      float gx = gyro_data.x / 16.0;
-      float gy = gyro_data.y / 16.0;
-      float gz = gyro_data.z / 16.0;
+      int16_t gx = gyro_data.x / 16;
+      int16_t gy = gyro_data.y / 16;
+      int16_t gz = gyro_data.z / 16;
+      int16_t gx_dec = abs((gyro_data.x % 16) * 100 / 16);
+      int16_t gy_dec = abs((gyro_data.y % 16) * 100 / 16);
+      int16_t gz_dec = abs((gyro_data.z % 16) * 100 / 16);
       
-      sprintf(uart_buf, "Gyro  - X:%.2f Y:%.2f Z:%.2f deg/s\r\n", 
-              gx, gy, gz);
+      sprintf(uart_buf, "Gyro  - X:%d.%02d Y:%d.%02d Z:%d.%02d deg/s\r\n", 
+              gx, gx_dec, gy, gy_dec, gz, gz_dec);
       HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
     }
     
     // Read magnetometer data
     if (BNO055_ReadMag(&hi2c1, &mag_data) == HAL_OK) {
-      float mx = mag_data.x / 16.0;
-      float my = mag_data.y / 16.0;
-      float mz = mag_data.z / 16.0;
+      int16_t mx = mag_data.x / 16;
+      int16_t my = mag_data.y / 16;
+      int16_t mz = mag_data.z / 16;
+      int16_t mx_dec = abs((mag_data.x % 16) * 100 / 16);
+      int16_t my_dec = abs((mag_data.y % 16) * 100 / 16);
+      int16_t mz_dec = abs((mag_data.z % 16) * 100 / 16);
       
-      sprintf(uart_buf, "Mag   - X:%.2f Y:%.2f Z:%.2f uT\r\n", 
-              mx, my, mz);
+      sprintf(uart_buf, "Mag   - X:%d.%02d Y:%d.%02d Z:%d.%02d uT\r\n", 
+              mx, mx_dec, my, my_dec, mz, mz_dec);
       HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
     }
     
