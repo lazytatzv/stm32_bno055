@@ -50,12 +50,14 @@ DMA_HandleTypeDef hdma_i2c1_rx;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-char uart_buf[200];
-BNO055_Vector_t accel_data;
-BNO055_Vector_t gyro_data;
-BNO055_Vector_t mag_data;
-BNO055_Vector_t euler_data;
-BNO055_CalibStatus_t calib_status;
+char uart_buf[250];
+BNO055_Vector_t accel_data = {0};
+BNO055_Vector_t gyro_data = {0};
+BNO055_Vector_t mag_data = {0};
+BNO055_Vector_t euler_data = {0};
+BNO055_CalibStatus_t calib_status = {0};
+uint32_t i2c_errors = 0;
+uint32_t i2c_success = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -156,33 +158,52 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     
+    HAL_StatusTypeDef status;
+    uint8_t read_success = 1;  // Flag to track if all reads succeed
+    
     // Read calibration status
-    if (BNO055_GetCalibration(&hi2c1, &calib_status) == HAL_OK) {
-      sprintf(uart_buf, "\r\n=== BNO055 Data ===\r\n");
+    status = BNO055_GetCalibration(&hi2c1, &calib_status);
+    if (status == HAL_OK) {
+      i2c_success++;
+      sprintf(uart_buf, "\r\n=== BNO055 Data (OK:%lu ERR:%lu) ===\r\n", i2c_success, i2c_errors);
       HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
       
       sprintf(uart_buf, "Calib: Sys=%d Gyro=%d Accel=%d Mag=%d\r\n",
               calib_status.sys, calib_status.gyro, 
               calib_status.accel, calib_status.mag);
       HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
+    } else {
+      i2c_errors++;
+      read_success = 0;
+      sprintf(uart_buf, "[ERROR] Calib read failed: %d (Errors:%lu)\r\n", status, i2c_errors);
+      HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
     }
     
     // Read Euler angles (orientation)
-    if (BNO055_ReadEuler(&hi2c1, &euler_data) == HAL_OK) {
+    status = BNO055_ReadEuler(&hi2c1, &euler_data);
+    if (status == HAL_OK) {
       int16_t heading = euler_data.x / 16;
       int16_t roll = euler_data.y / 16;
       int16_t pitch = euler_data.z / 16;
-      int16_t h_dec = ((euler_data.x % 16) * 100) / 16;
-      int16_t r_dec = ((euler_data.y % 16) * 100) / 16;
-      int16_t p_dec = ((euler_data.z % 16) * 100) / 16;
+      int16_t h_dec = abs((euler_data.x % 16) * 100 / 16);
+      int16_t r_dec = abs((euler_data.y % 16) * 100 / 16);
+      int16_t p_dec = abs((euler_data.z % 16) * 100 / 16);
       
       sprintf(uart_buf, "Euler - H:%d.%02d R:%d.%02d P:%d.%02d deg\r\n", 
               heading, h_dec, roll, r_dec, pitch, p_dec);
       HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
+    } else {
+      i2c_errors++;
+      read_success = 0;
+      sprintf(uart_buf, "[ERROR] Euler read failed: %d\r\n", status);
+      HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
     }
     
+    HAL_Delay(10);  // Wait for sensor data to be ready
+    
     // Read accelerometer data
-    if (BNO055_ReadAccel(&hi2c1, &accel_data) == HAL_OK) {
+    status = BNO055_ReadAccel(&hi2c1, &accel_data);
+    if (status == HAL_OK) {
       int16_t ax = accel_data.x / 100;
       int16_t ay = accel_data.y / 100;
       int16_t az = accel_data.z / 100;
@@ -193,10 +214,18 @@ int main(void)
       sprintf(uart_buf, "Accel - X:%d.%02d Y:%d.%02d Z:%d.%02d m/s2\r\n", 
               ax, ax_dec, ay, ay_dec, az, az_dec);
       HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
+    } else {
+      i2c_errors++;
+      read_success = 0;
+      sprintf(uart_buf, "[ERROR] Accel read failed: %d\r\n", status);
+      HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
     }
     
+    HAL_Delay(10);  // Wait for sensor data to be ready
+    
     // Read gyroscope data
-    if (BNO055_ReadGyro(&hi2c1, &gyro_data) == HAL_OK) {
+    status = BNO055_ReadGyro(&hi2c1, &gyro_data);
+    if (status == HAL_OK) {
       int16_t gx = gyro_data.x / 16;
       int16_t gy = gyro_data.y / 16;
       int16_t gz = gyro_data.z / 16;
@@ -207,10 +236,18 @@ int main(void)
       sprintf(uart_buf, "Gyro  - X:%d.%02d Y:%d.%02d Z:%d.%02d deg/s\r\n", 
               gx, gx_dec, gy, gy_dec, gz, gz_dec);
       HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
+    } else {
+      i2c_errors++;
+      read_success = 0;
+      sprintf(uart_buf, "[ERROR] Gyro read failed: %d\r\n", status);
+      HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
     }
     
+    HAL_Delay(10);  // Wait for sensor data to be ready
+    
     // Read magnetometer data
-    if (BNO055_ReadMag(&hi2c1, &mag_data) == HAL_OK) {
+    status = BNO055_ReadMag(&hi2c1, &mag_data);
+    if (status == HAL_OK) {
       int16_t mx = mag_data.x / 16;
       int16_t my = mag_data.y / 16;
       int16_t mz = mag_data.z / 16;
@@ -221,9 +258,19 @@ int main(void)
       sprintf(uart_buf, "Mag   - X:%d.%02d Y:%d.%02d Z:%d.%02d uT\r\n", 
               mx, mx_dec, my, my_dec, mz, mz_dec);
       HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
+    } else {
+      i2c_errors++;
+      read_success = 0;
+      sprintf(uart_buf, "[ERROR] Mag read failed: %d\r\n", status);
+      HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, strlen(uart_buf), HAL_MAX_DELAY);
     }
     
-    HAL_Delay(500);  // Read data every 500ms
+    // If there were errors, wait a bit before retrying
+    if (!read_success) {
+      HAL_Delay(100);
+    }
+    
+    HAL_Delay(100);  // Read data every 100ms (10Hz update rate)
     
   }
   /* USER CODE END 3 */

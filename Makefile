@@ -203,7 +203,19 @@ clean:
 #######################################
 -include $(wildcard $(BUILD_DIR)/*.d)
 
+
+BAUD_RATE = 115200
+USB_PORT = /dev/ttyACM0
+
 flash:
 	st-flash write build/mystm32project.bin 0x08000000
+
+read:
+	stty -F $(USB_PORT) $(BAUD_RATE)
+	cat $(USB_PORT)
+
+dump:
+	stty -F $(USB_PORT) $(BAUD_RATE)
+	cat $(USB_PORT) > dump.txt
 
 # *** EOF ***

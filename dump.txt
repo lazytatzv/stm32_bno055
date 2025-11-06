@@ -1,0 +1,842 @@
+5 Data (OK:5961 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:239.68 R:0.06 P:0.06 deg
+
+Accel - X:1.63 Y:1.14 Z:8.97 m/s2
+
+Gyro  - X:-3.37 Y:6.87 Z:8.12 deg/s
+
+Mag   - X:40.18 Y:-12.37 Z:-14.68 uT
+
+
+
+=== BNO055 Data (OK:5962 ERR:0) ===
+
+Calib: Sy
+
+=== BNO055 Data (OK:5977 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:234.43 R:2.81 P:1.50 deg
+
+Accel - X:0.08 Y:0.20 Z:8.97 m/s2
+
+Gyro  - X:3.75 Y:2.00 Z:0.68 deg/s
+
+Mag   - X:42.75 Y:-12.37 Z:-5.68 uT
+
+
+
+=== BNO055 Data (OK:5978 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:234.43 R:3.06 P:1.43 deg
+
+Accel - X:0.53 Y:0.26 Z:8.97 m/s2
+
+Gyro  - X:-6.56 Y:2.00 Z:0.68 deg/s
+
+Mag   - X:41.00 Y:-12.68 Z:-5.68 uT
+
+
+
+=== BNO055 Data (OK:5979 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:234.31 R:2.93 P:0.43 deg
+
+Accel - X:0.86 Y:0.03 Z:8.97 m/s2
+
+Gyro  - X:0.81 Y:4.18 Z:0.50 deg/s
+
+Mag   - X:42.50 Y:-59.87 Z:-5.37 uT
+
+
+
+=== BNO055 Data (OK:5980 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:234.25 R:2.25 P:0.25 deg
+
+Accel - X:0.40 Y:0.03 Z:8.97 m/s2
+
+Gyro  - X:-3.06 Y:5.43 Z:2.75 deg/s
+
+Mag   - X:42.50 Y:-59.87 Z:-4.56 uT
+
+
+
+=== BNO055 Data (OK:5981 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:233.62 R:0.56 P:0.06 deg
+
+Accel - X:0.19 Y:0.03 Z:10.02 m/s2
+
+Gyro  - X:-14.12 Y:5.43 Z:2.75 deg/s
+
+Mag   - X:43.56 Y:-12.68 Z:-4.56 uT
+
+
+
+=== BNO055 Data (OK:5982 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:233.18 R:0.06 P:0.06 deg
+
+Accel - X:0.00 Y:0.03 Z:10.02 m/s2
+
+Gyro  - X:-1.25 Y:5.37 Z:4.18 deg/s
+
+Mag   - X:44.25 Y:-59.25 Z:-4.56 uT
+
+
+
+=== BNO055 Data (OK:5983 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:232.93 R:0.06 P:0.06 deg
+
+Accel - X:0.01 Y:0.03 Z:10.02 m/s2
+
+Gyro  - X:0.18 Y:0.25 Z:1.93 deg/s
+
+Mag   - X:44.75 Y:-59.25 Z:-4.18 uT
+
+
+
+=== BNO055 Data (OK:5984 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:233.00 R:0.06 P:0.06 deg
+
+Accel - X:0.04 Y:0.24 Z:9.74 m/s2
+
+Gyro  - X:0.87 Y:0.43 Z:0.87 deg/s
+
+Mag   - X:44.75 Y:-59.25 Z:-35.75 uT
+
+
+
+=== BNO055 Data (OK:5985 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:233.06 R:0.06 P:0.06 deg
+
+Accel - X:0.03 Y:0.51 Z:9.86 m/s2
+
+Gyro  - X:0.87 Y:1.43 Z:0.87 deg/s
+
+Mag   - X:45.06 Y:-58.87 Z:-4.56 uT
+
+
+
+=== BNO055 Data (OK:5986 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:233.31 R:0.06 P:0.06 deg
+
+Accel - X:0.11 Y:0.51 Z:9.86 m/s2
+
+Gyro  - X:-1.62 Y:6.81 Z:0.62 deg/s
+
+Mag   - X:45.06 Y:-58.87 Z:-4.18 uT
+
+
+
+=== BNO055 Data (OK:5987 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:233.50 R:0.06 P:0.06 deg
+
+Accel - X:0.20 Y:0.70 Z:9.86 m/s2
+
+Gyro  - X:-2.31 Y:0.62 Z:0.62 deg/s
+
+Mag   - X:44.37 Y:-58.50 Z:-35.75 uT
+
+
+
+=== BNO055 Data (OK:5988 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:233.43 R:0.06 P:0.06 deg
+
+Accel - X:0.83 Y:0.70 Z:9.86 m/s2
+
+Gyro  - X:-12.50 Y:0.62 Z:0.62 deg/s
+
+Mag   - X:45.06 Y:-58.06 Z:-34.18 uT
+
+
+
+=== BNO055 Data (OK:5989 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:232.68 R:0.06 P:0.06 deg
+
+Accel - X:0.17 Y:0.70 Z:9.86 m/s2
+
+Gyro  - X:-13.56 Y:0.62 Z:0.62 deg/s
+
+Mag   - X:45.06 Y:-58.06 Z:-33.37 uT
+
+
+
+=== BNO055 Data (OK:5990 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:231.50 R:0.06 P:0.06 deg
+
+Accel - X:-1.64 Y:0.96 Z:9.86 m/s2
+
+Gyro  - X:3.68 Y:4.93 Z:3.87 deg/s
+
+Mag   - X:46.68 Y:-57.37 Z:-33.00 uT
+
+
+
+=== BNO055 Data (OK:5991 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:231.31 R:-8.87 P:-4.43 deg
+
+Accel - X:-1.13 Y:0.96 Z:9.86 m/s2
+
+Gyro  - X:13.37 Y:4.93 Z:3.87 deg/s
+
+Mag   - X:48.06 Y:-58.87 Z:-15.87 uT
+
+
+
+=== BNO055 Data (OK:5992 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:232.62 R:-10.06 P:-2.87 deg
+
+Accel - X:-1.78 Y:0.89 Z:9.86 m/s2
+
+Gyro  - X:-2.93 Y:1.06 Z:3.87 deg/s
+
+Mag   - X:47.68 Y:-58.00 Z:-13.87 uT
+
+
+
+=== BNO055 Data (OK:5993 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:233.25 R:-10.75 P:-2.87 deg
+
+Accel - X:-1.74 Y:0.72 Z:9.86 m/s2
+
+Gyro  - X:-1.31 Y:5.37 Z:3.87 deg/s
+
+Mag   - X:48.18 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:5994 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:234.56 R:-12.50 P:0.06 deg
+
+Accel - X:-2.17 Y:0.72 Z:9.86 m/s2
+
+Gyro  - X:-5.37 Y:5.37 Z:3.87 deg/s
+
+Mag   - X:49.00 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:5995 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:235.50 R:-15.62 P:0.06 deg
+
+Accel - X:-2.50 Y:0.72 Z:9.86 m/s2
+
+Gyro  - X:-9.31 Y:5.68 Z:3.87 deg/s
+
+Mag   - X:51.18 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:5996 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:235.50 R:-15.56 P:0.06 deg
+
+Accel - X:-2.85 Y:-1.69 Z:9.04 m/s2
+
+Gyro  - X:35.37 Y:-15.93 Z:3.87 deg/s
+
+Mag   - X:51.06 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:5997 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:235.68 R:-13.31 P:0.06 deg
+
+Accel - X:0.79 Y:-1.69 Z:9.04 m/s2
+
+Gyro  - X:26.06 Y:-41.50 Z:-6.62 deg/s
+
+Mag   - X:51.06 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:5998 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:238.62 R:0.06 P:0.06 deg
+
+Accel - X:2.53 Y:-1.69 Z:9.04 m/s2
+
+Gyro  - X:15.18 Y:-41.50 Z:-6.62 deg/s
+
+Mag   - X:45.56 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:5999 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:240.93 R:0.06 P:0.06 deg
+
+Accel - X:1.99 Y:-1.69 Z:9.04 m/s2
+
+Gyro  - X:0.37 Y:-13.62 Z:-6.62 deg/s
+
+Mag   - X:40.18 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:6000 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:240.75 R:0.06 P:0.06 deg
+
+Accel - X:2.10 Y:-1.69 Z:9.04 m/s2
+
+Gyro  - X:-2.62 Y:-2.62 Z:2.25 deg/s
+
+Mag   - X:38.18 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:6001 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:240.18 R:0.06 P:0.06 deg
+
+Accel - X:2.26 Y:-1.69 Z:9.04 m/s2
+
+Gyro  - X:-6.31 Y:-2.62 Z:2.25 deg/s
+
+Mag   - X:37.18 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:6002 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:239.43 R:16.87 P:0.06 deg
+
+Accel - X:3.55 Y:-1.69 Z:9.04 m/s2
+
+Gyro  - X:-11.68 Y:23.75 Z:21.18 deg/s
+
+Mag   - X:35.87 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:6003 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:238.37 R:7.81 P:0.06 deg
+
+Accel - X:0.97 Y:-1.69 Z:9.04 m/s2
+
+Gyro  - X:10.50 Y:84.81 Z:21.18 deg/s
+
+Mag   - X:39.87 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:6004 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:239.87 R:0.06 P:0.06 deg
+
+Accel - X:-1.07 Y:-1.69 Z:9.04 m/s2
+
+Gyro  - X:4.75 Y:84.81 Z:21.18 deg/s
+
+Mag   - X:42.87 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:6005 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:239.43 R:0.06 P:0.06 deg
+
+Accel - X:0.72 Y:-1.69 Z:9.04 m/s2
+
+Gyro  - X:74.56 Y:84.81 Z:21.18 deg/s
+
+Mag   - X:42.37 Y:-57.25 Z:-14.18 uT
+
+
+
+=== BNO055 Data (OK:6006 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:239.06 R:0.50 P:6.18 deg
+
+Accel - X:0.95 Y:-1.69 Z:9.04 m/s2
+
+Gyro  - X:-27.37 Y:11.56 Z:-11.62 deg/s
+
+Mag   - X:39.56 Y:-56.68 Z:-33.56 uT
+
+
+
+=== BNO055 Data (OK:6007 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:238.87 R:0.06 P:0.06 deg
+
+Accel - X:0.69 Y:-1.69 Z:9.04 m/s2
+
+Gyro  - X:-122.12 Y:-57.12 Z:0.62 deg/s
+
+Mag   - X:42.00 Y:-56.68 Z:-33.56 uT
+
+
+
+=== BNO055 Data (OK:6008 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:237.12 R:1.06 P:-13.12 deg
+
+Accel - X:-1.74 Y:-4.00 Z:10.77 m/s2
+
+Gyro  - X:10.50 Y:-57.12 Z:0.62 deg/s
+
+Mag   - X:41.87 Y:-56.68 Z:-33.56 uT
+
+
+
+=== BNO055 Data (OK:6009 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:236.00 R:3.31 P:0.06 deg
+
+Accel - X:0.85 Y:0.67 Z:8.89 m/s2
+
+Gyro  - X:63.06 Y:-13.62 Z:0.62 deg/s
+
+Mag   - X:41.37 Y:-56.68 Z:-33.56 uT
+
+
+
+=== BNO055 Data (OK:6010 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:235.81 R:4.68 P:1.68 deg
+
+Accel - X:0.50 Y:0.67 Z:8.89 m/s2
+
+Gyro  - X:-32.93 Y:25.25 Z:-40.06 deg/s
+
+Mag   - X:38.68 Y:-56.25 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6011 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:239.25 R:0.06 P:0.06 deg
+
+Accel - X:-3.86 Y:2.90 Z:8.89 m/s2
+
+Gyro  - X:25.12 Y:25.25 Z:-40.06 deg/s
+
+Mag   - X:43.18 Y:-15.68 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6012 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:237.12 R:2.56 P:0.06 deg
+
+Accel - X:0.02 Y:0.06 Z:9.72 m/s2
+
+Gyro  - X:69.00 Y:-26.75 Z:-7.75 deg/s
+
+Mag   - X:40.00 Y:-15.68 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6013 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:237.00 R:5.12 P:0.81 deg
+
+Accel - X:0.75 Y:0.81 Z:9.72 m/s2
+
+Gyro  - X:1.00 Y:3.50 Z:-7.75 deg/s
+
+Mag   - X:39.37 Y:-15.68 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6014 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:236.68 R:3.31 P:0.06 deg
+
+Accel - X:0.39 Y:0.81 Z:9.72 m/s2
+
+Gyro  - X:-44.00 Y:-4.75 Z:-7.75 deg/s
+
+Mag   - X:42.06 Y:-15.68 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6015 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:234.25 R:0.06 P:0.06 deg
+
+Accel - X:2.53 Y:-1.84 Z:9.64 m/s2
+
+Gyro  - X:10.31 Y:2.12 Z:-7.75 deg/s
+
+Mag   - X:39.25 Y:-15.68 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6016 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:237.31 R:0.06 P:0.06 deg
+
+Accel - X:-5.50 Y:-1.70 Z:10.87 m/s2
+
+Gyro  - X:55.37 Y:85.00 Z:-7.75 deg/s
+
+Mag   - X:41.68 Y:-15.68 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6017 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:242.50 R:0.18 P:3.37 deg
+
+Accel - X:0.09 Y:2.69 Z:8.06 m/s2
+
+Gyro  - X:-3.81 Y:-67.06 Z:9.75 deg/s
+
+Mag   - X:42.18 Y:-15.68 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6018 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:236.37 R:1.75 P:0.06 deg
+
+Accel - X:0.83 Y:2.69 Z:8.06 m/s2
+
+Gyro  - X:-68.00 Y:54.37 Z:23.81 deg/s
+
+Mag   - X:42.18 Y:-15.68 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6019 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:241.06 R:0.06 P:0.06 deg
+
+Accel - X:-2.41 Y:2.69 Z:8.06 m/s2
+
+Gyro  - X:32.31 Y:54.37 Z:23.81 deg/s
+
+Mag   - X:42.25 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6020 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:238.50 R:1.43 P:0.06 deg
+
+Accel - X:3.10 Y:-2.15 Z:8.06 m/s2
+
+Gyro  - X:-15.62 Y:54.37 Z:23.81 deg/s
+
+Mag   - X:41.18 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6021 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:237.18 R:0.06 P:0.06 deg
+
+Accel - X:-3.07 Y:0.05 Z:11.01 m/s2
+
+Gyro  - X:119.93 Y:54.37 Z:23.81 deg/s
+
+Mag   - X:45.00 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6022 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:238.37 R:3.25 P:2.93 deg
+
+Accel - X:4.45 Y:0.05 Z:11.01 m/s2
+
+Gyro  - X:-7.68 Y:54.37 Z:23.81 deg/s
+
+Mag   - X:40.18 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6023 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:236.81 R:0.06 P:0.06 deg
+
+Accel - X:-1.44 Y:0.80 Z:11.01 m/s2
+
+Gyro  - X:96.18 Y:54.37 Z:23.81 deg/s
+
+Mag   - X:43.68 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6024 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:241.81 R:0.06 P:0.06 deg
+
+Accel - X:-2.22 Y:0.80 Z:11.01 m/s2
+
+Gyro  - X:-7.18 Y:54.37 Z:23.81 deg/s
+
+Mag   - X:41.18 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6025 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:237.75 R:0.06 P:0.06 deg
+
+Accel - X:1.36 Y:0.80 Z:11.01 m/s2
+
+Gyro  - X:4.50 Y:54.37 Z:23.81 deg/s
+
+Mag   - X:42.50 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6026 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:242.00 R:0.06 P:0.06 deg
+
+Accel - X:0.34 Y:3.22 Z:7.95 m/s2
+
+Gyro  - X:-3.87 Y:67.31 Z:23.81 deg/s
+
+Mag   - X:43.56 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6027 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:242.00 R:0.06 P:0.06 deg
+
+Accel - X:-1.06 Y:3.22 Z:7.95 m/s2
+
+Gyro  - X:-15.56 Y:67.31 Z:23.81 deg/s
+
+Mag   - X:43.87 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6028 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:240.06 R:0.06 P:0.06 deg
+
+Accel - X:0.40 Y:0.15 Z:7.95 m/s2
+
+Gyro  - X:21.75 Y:16.68 Z:23.81 deg/s
+
+Mag   - X:44.56 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6029 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:242.75 R:-8.81 P:11.06 deg
+
+Accel - X:-2.73 Y:4.85 Z:8.60 m/s2
+
+Gyro  - X:9.18 Y:7.43 Z:4.12 deg/s
+
+Mag   - X:44.18 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6030 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:240.25 R:0.06 P:0.06 deg
+
+Accel - X:0.02 Y:0.36 Z:9.91 m/s2
+
+Gyro  - X:-12.81 Y:7.43 Z:4.12 deg/s
+
+Mag   - X:44.56 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6031 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:240.68 R:0.06 P:0.06 deg
+
+Accel - X:-1.65 Y:1.88 Z:9.91 m/s2
+
+Gyro  - X:0.56 Y:17.93 Z:4.12 deg/s
+
+Mag   - X:44.18 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6032 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:240.06 R:-8.43 P:4.37 deg
+
+Accel - X:-2.44 Y:1.88 Z:9.91 m/s2
+
+Gyro  - X:-72.75 Y:-15.25 Z:4.12 deg/s
+
+Mag   - X:45.25 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6033 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:237.06 R:0.06 P:0.06 deg
+
+Accel - X:0.99 Y:1.88 Z:9.91 m/s2
+
+Gyro  - X:-5.87 Y:-15.25 Z:4.12 deg/s
+
+Mag   - X:44.87 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6034 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:234.50 R:0.06 P:0.06 deg
+
+Accel - X:-1.77 Y:-1.83 Z:10.59 m/s2
+
+Gyro  - X:28.37 Y:-15.25 Z:4.12 deg/s
+
+Mag   - X:43.06 Y:-15.18 Z:-36.00 uT
+
+
+
+=== BNO055 Data (OK:6035 ERR:0) ===
+
+Calib: Sys=0 Gyro=3 Accel=3 Mag=2
+
+Euler - H:234.37 R:0.06 P:0.06 deg
+
+Accel - X:0.78 Y:-1.83 Z:10.59 m/s2
+
+Gyro  - X:11.31 Y:-15.25 Z:4.12 deg/s
+
+Mag   - X:42.00 Y:-15.18 Z:-36.00 uT
+
