@@ -1,0 +1,1420 @@
+ARM GAS  /tmp/ccNPUzL4.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"bno055.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/bno055.c"
+  20              		.section	.text.BNO055_SetMode,"ax",%progbits
+  21              		.align	1
+  22              		.global	BNO055_SetMode
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	BNO055_SetMode:
+  28              	.LVL0:
+  29              	.LFB135:
+   1:Core/Src/bno055.c **** /* USER CODE BEGIN Header */
+   2:Core/Src/bno055.c **** /**
+   3:Core/Src/bno055.c ****   ******************************************************************************
+   4:Core/Src/bno055.c ****   * @file           : bno055.c
+   5:Core/Src/bno055.c ****   * @brief          : BNO055 sensor driver implementation
+   6:Core/Src/bno055.c ****   ******************************************************************************
+   7:Core/Src/bno055.c ****   */
+   8:Core/Src/bno055.c **** /* USER CODE END Header */
+   9:Core/Src/bno055.c **** 
+  10:Core/Src/bno055.c **** #include "bno055.h"
+  11:Core/Src/bno055.c **** 
+  12:Core/Src/bno055.c **** #define BNO055_TIMEOUT 1000
+  13:Core/Src/bno055.c **** 
+  14:Core/Src/bno055.c **** /**
+  15:Core/Src/bno055.c ****   * @brief  Initialize BNO055 sensor
+  16:Core/Src/bno055.c ****   * @param  hi2c: pointer to I2C handle
+  17:Core/Src/bno055.c ****   * @retval HAL status
+  18:Core/Src/bno055.c ****   */
+  19:Core/Src/bno055.c **** HAL_StatusTypeDef BNO055_Init(I2C_HandleTypeDef *hi2c)
+  20:Core/Src/bno055.c **** {
+  21:Core/Src/bno055.c ****     HAL_StatusTypeDef status;
+  22:Core/Src/bno055.c ****     uint8_t chip_id;
+  23:Core/Src/bno055.c ****     
+  24:Core/Src/bno055.c ****     // Wait for sensor to boot
+  25:Core/Src/bno055.c ****     HAL_Delay(650);
+  26:Core/Src/bno055.c ****     
+  27:Core/Src/bno055.c ****     // Check chip ID
+  28:Core/Src/bno055.c ****     status = BNO055_GetChipID(hi2c, &chip_id);
+  29:Core/Src/bno055.c ****     if (status != HAL_OK || chip_id != BNO055_ID) {
+ARM GAS  /tmp/ccNPUzL4.s 			page 2
+
+
+  30:Core/Src/bno055.c ****         return HAL_ERROR;
+  31:Core/Src/bno055.c ****     }
+  32:Core/Src/bno055.c ****     
+  33:Core/Src/bno055.c ****     // Set to config mode
+  34:Core/Src/bno055.c ****     status = BNO055_SetMode(hi2c, BNO055_OPERATION_MODE_CONFIG);
+  35:Core/Src/bno055.c ****     if (status != HAL_OK) return status;
+  36:Core/Src/bno055.c ****     HAL_Delay(25);
+  37:Core/Src/bno055.c ****     
+  38:Core/Src/bno055.c ****     // Reset
+  39:Core/Src/bno055.c ****     uint8_t reset_cmd = 0x20;
+  40:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_SYS_TRIGGER_ADDR, 
+  41:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &reset_cmd, 1, BNO055_TIMEOUT);
+  42:Core/Src/bno055.c ****     if (status != HAL_OK) return status;
+  43:Core/Src/bno055.c ****     HAL_Delay(650);
+  44:Core/Src/bno055.c ****     
+  45:Core/Src/bno055.c ****     // Set power mode to normal
+  46:Core/Src/bno055.c ****     uint8_t pwr_mode = BNO055_POWER_MODE_NORMAL;
+  47:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_PWR_MODE_ADDR, 
+  48:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &pwr_mode, 1, BNO055_TIMEOUT);
+  49:Core/Src/bno055.c ****     if (status != HAL_OK) return status;
+  50:Core/Src/bno055.c ****     HAL_Delay(10);
+  51:Core/Src/bno055.c ****     
+  52:Core/Src/bno055.c ****     // Set page ID to 0
+  53:Core/Src/bno055.c ****     uint8_t page_id = 0;
+  54:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_PAGE_ID_ADDR, 
+  55:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &page_id, 1, BNO055_TIMEOUT);
+  56:Core/Src/bno055.c ****     if (status != HAL_OK) return status;
+  57:Core/Src/bno055.c ****     
+  58:Core/Src/bno055.c ****     // Set units (default: m/s^2, deg/s, degrees, Celsius)
+  59:Core/Src/bno055.c ****     uint8_t unit_sel = 0x00;
+  60:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_UNIT_SEL_ADDR, 
+  61:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &unit_sel, 1, BNO055_TIMEOUT);
+  62:Core/Src/bno055.c ****     if (status != HAL_OK) return status;
+  63:Core/Src/bno055.c ****     
+  64:Core/Src/bno055.c ****     // Set to NDOF mode (9DOF fusion)
+  65:Core/Src/bno055.c ****     status = BNO055_SetMode(hi2c, BNO055_OPERATION_MODE_NDOF);
+  66:Core/Src/bno055.c ****     if (status != HAL_OK) return status;
+  67:Core/Src/bno055.c ****     HAL_Delay(20);
+  68:Core/Src/bno055.c ****     
+  69:Core/Src/bno055.c ****     return HAL_OK;
+  70:Core/Src/bno055.c **** }
+  71:Core/Src/bno055.c **** 
+  72:Core/Src/bno055.c **** /**
+  73:Core/Src/bno055.c ****   * @brief  Set operation mode
+  74:Core/Src/bno055.c ****   * @param  hi2c: pointer to I2C handle
+  75:Core/Src/bno055.c ****   * @param  mode: operation mode
+  76:Core/Src/bno055.c ****   * @retval HAL status
+  77:Core/Src/bno055.c ****   */
+  78:Core/Src/bno055.c **** HAL_StatusTypeDef BNO055_SetMode(I2C_HandleTypeDef *hi2c, uint8_t mode)
+  79:Core/Src/bno055.c **** {
+  30              		.loc 1 79 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 8
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 79 1 is_stmt 0 view .LVU1
+  35 0000 00B5     		push	{lr}
+  36              	.LCFI0:
+ARM GAS  /tmp/ccNPUzL4.s 			page 3
+
+
+  37              		.cfi_def_cfa_offset 4
+  38              		.cfi_offset 14, -4
+  39 0002 87B0     		sub	sp, sp, #28
+  40              	.LCFI1:
+  41              		.cfi_def_cfa_offset 32
+  42 0004 8DF81710 		strb	r1, [sp, #23]
+  80:Core/Src/bno055.c ****     return HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_OPR_MODE_ADDR, 
+  43              		.loc 1 80 5 is_stmt 1 view .LVU2
+  44              		.loc 1 80 12 is_stmt 0 view .LVU3
+  45 0008 4FF47A73 		mov	r3, #1000
+  46 000c 0293     		str	r3, [sp, #8]
+  47 000e 0123     		movs	r3, #1
+  48 0010 0193     		str	r3, [sp, #4]
+  49 0012 0DF11702 		add	r2, sp, #23
+  50 0016 0092     		str	r2, [sp]
+  51 0018 3D22     		movs	r2, #61
+  52 001a 5021     		movs	r1, #80
+  53              	.LVL1:
+  54              		.loc 1 80 12 view .LVU4
+  55 001c FFF7FEFF 		bl	HAL_I2C_Mem_Write
+  56              	.LVL2:
+  81:Core/Src/bno055.c ****                               I2C_MEMADD_SIZE_8BIT, &mode, 1, BNO055_TIMEOUT);
+  82:Core/Src/bno055.c **** }
+  57              		.loc 1 82 1 view .LVU5
+  58 0020 07B0     		add	sp, sp, #28
+  59              	.LCFI2:
+  60              		.cfi_def_cfa_offset 4
+  61              		@ sp needed
+  62 0022 5DF804FB 		ldr	pc, [sp], #4
+  63              		.cfi_endproc
+  64              	.LFE135:
+  66              		.section	.text.BNO055_GetChipID,"ax",%progbits
+  67              		.align	1
+  68              		.global	BNO055_GetChipID
+  69              		.syntax unified
+  70              		.thumb
+  71              		.thumb_func
+  73              	BNO055_GetChipID:
+  74              	.LVL3:
+  75              	.LFB136:
+  83:Core/Src/bno055.c **** 
+  84:Core/Src/bno055.c **** /**
+  85:Core/Src/bno055.c ****   * @brief  Get chip ID
+  86:Core/Src/bno055.c ****   * @param  hi2c: pointer to I2C handle
+  87:Core/Src/bno055.c ****   * @param  id: pointer to store chip ID
+  88:Core/Src/bno055.c ****   * @retval HAL status
+  89:Core/Src/bno055.c ****   */
+  90:Core/Src/bno055.c **** HAL_StatusTypeDef BNO055_GetChipID(I2C_HandleTypeDef *hi2c, uint8_t *id)
+  91:Core/Src/bno055.c **** {
+  76              		.loc 1 91 1 is_stmt 1 view -0
+  77              		.cfi_startproc
+  78              		@ args = 0, pretend = 0, frame = 0
+  79              		@ frame_needed = 0, uses_anonymous_args = 0
+  80              		.loc 1 91 1 is_stmt 0 view .LVU7
+  81 0000 00B5     		push	{lr}
+  82              	.LCFI3:
+  83              		.cfi_def_cfa_offset 4
+ARM GAS  /tmp/ccNPUzL4.s 			page 4
+
+
+  84              		.cfi_offset 14, -4
+  85 0002 85B0     		sub	sp, sp, #20
+  86              	.LCFI4:
+  87              		.cfi_def_cfa_offset 24
+  92:Core/Src/bno055.c ****     return HAL_I2C_Mem_Read(hi2c, BNO055_I2C_ADDR, BNO055_CHIP_ID_ADDR, 
+  88              		.loc 1 92 5 is_stmt 1 view .LVU8
+  89              		.loc 1 92 12 is_stmt 0 view .LVU9
+  90 0004 4FF47A73 		mov	r3, #1000
+  91 0008 0293     		str	r3, [sp, #8]
+  92 000a 0123     		movs	r3, #1
+  93 000c 0193     		str	r3, [sp, #4]
+  94 000e 0091     		str	r1, [sp]
+  95 0010 0022     		movs	r2, #0
+  96 0012 5021     		movs	r1, #80
+  97              	.LVL4:
+  98              		.loc 1 92 12 view .LVU10
+  99 0014 FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 100              	.LVL5:
+  93:Core/Src/bno055.c ****                              I2C_MEMADD_SIZE_8BIT, id, 1, BNO055_TIMEOUT);
+  94:Core/Src/bno055.c **** }
+ 101              		.loc 1 94 1 view .LVU11
+ 102 0018 05B0     		add	sp, sp, #20
+ 103              	.LCFI5:
+ 104              		.cfi_def_cfa_offset 4
+ 105              		@ sp needed
+ 106 001a 5DF804FB 		ldr	pc, [sp], #4
+ 107              		.cfi_endproc
+ 108              	.LFE136:
+ 110              		.section	.text.BNO055_Init,"ax",%progbits
+ 111              		.align	1
+ 112              		.global	BNO055_Init
+ 113              		.syntax unified
+ 114              		.thumb
+ 115              		.thumb_func
+ 117              	BNO055_Init:
+ 118              	.LVL6:
+ 119              	.LFB134:
+  20:Core/Src/bno055.c ****     HAL_StatusTypeDef status;
+ 120              		.loc 1 20 1 is_stmt 1 view -0
+ 121              		.cfi_startproc
+ 122              		@ args = 0, pretend = 0, frame = 8
+ 123              		@ frame_needed = 0, uses_anonymous_args = 0
+  20:Core/Src/bno055.c ****     HAL_StatusTypeDef status;
+ 124              		.loc 1 20 1 is_stmt 0 view .LVU13
+ 125 0000 30B5     		push	{r4, r5, lr}
+ 126              	.LCFI6:
+ 127              		.cfi_def_cfa_offset 12
+ 128              		.cfi_offset 4, -12
+ 129              		.cfi_offset 5, -8
+ 130              		.cfi_offset 14, -4
+ 131 0002 87B0     		sub	sp, sp, #28
+ 132              	.LCFI7:
+ 133              		.cfi_def_cfa_offset 40
+ 134 0004 0446     		mov	r4, r0
+  21:Core/Src/bno055.c ****     uint8_t chip_id;
+ 135              		.loc 1 21 5 is_stmt 1 view .LVU14
+  22:Core/Src/bno055.c ****     
+ARM GAS  /tmp/ccNPUzL4.s 			page 5
+
+
+ 136              		.loc 1 22 5 view .LVU15
+  25:Core/Src/bno055.c ****     
+ 137              		.loc 1 25 5 view .LVU16
+ 138 0006 40F28A20 		movw	r0, #650
+ 139              	.LVL7:
+  25:Core/Src/bno055.c ****     
+ 140              		.loc 1 25 5 is_stmt 0 view .LVU17
+ 141 000a FFF7FEFF 		bl	HAL_Delay
+ 142              	.LVL8:
+  28:Core/Src/bno055.c ****     if (status != HAL_OK || chip_id != BNO055_ID) {
+ 143              		.loc 1 28 5 is_stmt 1 view .LVU18
+  28:Core/Src/bno055.c ****     if (status != HAL_OK || chip_id != BNO055_ID) {
+ 144              		.loc 1 28 14 is_stmt 0 view .LVU19
+ 145 000e 0DF11701 		add	r1, sp, #23
+ 146 0012 2046     		mov	r0, r4
+ 147 0014 FFF7FEFF 		bl	BNO055_GetChipID
+ 148              	.LVL9:
+  29:Core/Src/bno055.c ****         return HAL_ERROR;
+ 149              		.loc 1 29 5 is_stmt 1 view .LVU20
+  29:Core/Src/bno055.c ****         return HAL_ERROR;
+ 150              		.loc 1 29 8 is_stmt 0 view .LVU21
+ 151 0018 0028     		cmp	r0, #0
+ 152 001a 6ED1     		bne	.L7
+  29:Core/Src/bno055.c ****         return HAL_ERROR;
+ 153              		.loc 1 29 37 discriminator 1 view .LVU22
+ 154 001c 9DF81730 		ldrb	r3, [sp, #23]	@ zero_extendqisi2
+  29:Core/Src/bno055.c ****         return HAL_ERROR;
+ 155              		.loc 1 29 26 discriminator 1 view .LVU23
+ 156 0020 A02B     		cmp	r3, #160
+ 157 0022 03D0     		beq	.L10
+  30:Core/Src/bno055.c ****     }
+ 158              		.loc 1 30 16 view .LVU24
+ 159 0024 0125     		movs	r5, #1
+ 160              	.LVL10:
+ 161              	.L6:
+  70:Core/Src/bno055.c **** 
+ 162              		.loc 1 70 1 view .LVU25
+ 163 0026 2846     		mov	r0, r5
+ 164 0028 07B0     		add	sp, sp, #28
+ 165              	.LCFI8:
+ 166              		.cfi_remember_state
+ 167              		.cfi_def_cfa_offset 12
+ 168              		@ sp needed
+ 169 002a 30BD     		pop	{r4, r5, pc}
+ 170              	.LVL11:
+ 171              	.L10:
+ 172              	.LCFI9:
+ 173              		.cfi_restore_state
+  34:Core/Src/bno055.c ****     if (status != HAL_OK) return status;
+ 174              		.loc 1 34 5 is_stmt 1 view .LVU26
+  34:Core/Src/bno055.c ****     if (status != HAL_OK) return status;
+ 175              		.loc 1 34 14 is_stmt 0 view .LVU27
+ 176 002c 0021     		movs	r1, #0
+ 177 002e 2046     		mov	r0, r4
+ 178              	.LVL12:
+  34:Core/Src/bno055.c ****     if (status != HAL_OK) return status;
+ 179              		.loc 1 34 14 view .LVU28
+ARM GAS  /tmp/ccNPUzL4.s 			page 6
+
+
+ 180 0030 FFF7FEFF 		bl	BNO055_SetMode
+ 181              	.LVL13:
+  35:Core/Src/bno055.c ****     HAL_Delay(25);
+ 182              		.loc 1 35 5 is_stmt 1 view .LVU29
+  35:Core/Src/bno055.c ****     HAL_Delay(25);
+ 183              		.loc 1 35 8 is_stmt 0 view .LVU30
+ 184 0034 0546     		mov	r5, r0
+ 185 0036 0028     		cmp	r0, #0
+ 186 0038 F5D1     		bne	.L6
+  36:Core/Src/bno055.c ****     
+ 187              		.loc 1 36 5 is_stmt 1 view .LVU31
+ 188 003a 1920     		movs	r0, #25
+ 189              	.LVL14:
+  36:Core/Src/bno055.c ****     
+ 190              		.loc 1 36 5 is_stmt 0 view .LVU32
+ 191 003c FFF7FEFF 		bl	HAL_Delay
+ 192              	.LVL15:
+  39:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_SYS_TRIGGER_ADDR, 
+ 193              		.loc 1 39 5 is_stmt 1 view .LVU33
+  39:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_SYS_TRIGGER_ADDR, 
+ 194              		.loc 1 39 13 is_stmt 0 view .LVU34
+ 195 0040 2023     		movs	r3, #32
+ 196 0042 8DF81630 		strb	r3, [sp, #22]
+  40:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &reset_cmd, 1, BNO055_TIMEOUT);
+ 197              		.loc 1 40 5 is_stmt 1 view .LVU35
+  40:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &reset_cmd, 1, BNO055_TIMEOUT);
+ 198              		.loc 1 40 14 is_stmt 0 view .LVU36
+ 199 0046 4FF47A73 		mov	r3, #1000
+ 200 004a 0293     		str	r3, [sp, #8]
+ 201 004c 0123     		movs	r3, #1
+ 202 004e 0193     		str	r3, [sp, #4]
+ 203 0050 0DF11602 		add	r2, sp, #22
+ 204 0054 0092     		str	r2, [sp]
+ 205 0056 3F22     		movs	r2, #63
+ 206 0058 5021     		movs	r1, #80
+ 207 005a 2046     		mov	r0, r4
+ 208 005c FFF7FEFF 		bl	HAL_I2C_Mem_Write
+ 209              	.LVL16:
+  42:Core/Src/bno055.c ****     HAL_Delay(650);
+ 210              		.loc 1 42 5 is_stmt 1 view .LVU37
+  42:Core/Src/bno055.c ****     HAL_Delay(650);
+ 211              		.loc 1 42 8 is_stmt 0 view .LVU38
+ 212 0060 0546     		mov	r5, r0
+ 213 0062 0028     		cmp	r0, #0
+ 214 0064 DFD1     		bne	.L6
+  43:Core/Src/bno055.c ****     
+ 215              		.loc 1 43 5 is_stmt 1 view .LVU39
+ 216 0066 40F28A20 		movw	r0, #650
+ 217              	.LVL17:
+  43:Core/Src/bno055.c ****     
+ 218              		.loc 1 43 5 is_stmt 0 view .LVU40
+ 219 006a FFF7FEFF 		bl	HAL_Delay
+ 220              	.LVL18:
+  46:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_PWR_MODE_ADDR, 
+ 221              		.loc 1 46 5 is_stmt 1 view .LVU41
+  46:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_PWR_MODE_ADDR, 
+ 222              		.loc 1 46 13 is_stmt 0 view .LVU42
+ARM GAS  /tmp/ccNPUzL4.s 			page 7
+
+
+ 223 006e 0023     		movs	r3, #0
+ 224 0070 8DF81530 		strb	r3, [sp, #21]
+  47:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &pwr_mode, 1, BNO055_TIMEOUT);
+ 225              		.loc 1 47 5 is_stmt 1 view .LVU43
+  47:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &pwr_mode, 1, BNO055_TIMEOUT);
+ 226              		.loc 1 47 14 is_stmt 0 view .LVU44
+ 227 0074 4FF47A73 		mov	r3, #1000
+ 228 0078 0293     		str	r3, [sp, #8]
+ 229 007a 0123     		movs	r3, #1
+ 230 007c 0193     		str	r3, [sp, #4]
+ 231 007e 0DF11502 		add	r2, sp, #21
+ 232 0082 0092     		str	r2, [sp]
+ 233 0084 3E22     		movs	r2, #62
+ 234 0086 5021     		movs	r1, #80
+ 235 0088 2046     		mov	r0, r4
+ 236 008a FFF7FEFF 		bl	HAL_I2C_Mem_Write
+ 237              	.LVL19:
+  49:Core/Src/bno055.c ****     HAL_Delay(10);
+ 238              		.loc 1 49 5 is_stmt 1 view .LVU45
+  49:Core/Src/bno055.c ****     HAL_Delay(10);
+ 239              		.loc 1 49 8 is_stmt 0 view .LVU46
+ 240 008e 0546     		mov	r5, r0
+ 241 0090 0028     		cmp	r0, #0
+ 242 0092 C8D1     		bne	.L6
+  50:Core/Src/bno055.c ****     
+ 243              		.loc 1 50 5 is_stmt 1 view .LVU47
+ 244 0094 0A20     		movs	r0, #10
+ 245              	.LVL20:
+  50:Core/Src/bno055.c ****     
+ 246              		.loc 1 50 5 is_stmt 0 view .LVU48
+ 247 0096 FFF7FEFF 		bl	HAL_Delay
+ 248              	.LVL21:
+  53:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_PAGE_ID_ADDR, 
+ 249              		.loc 1 53 5 is_stmt 1 view .LVU49
+  53:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_PAGE_ID_ADDR, 
+ 250              		.loc 1 53 13 is_stmt 0 view .LVU50
+ 251 009a 0023     		movs	r3, #0
+ 252 009c 8DF81430 		strb	r3, [sp, #20]
+  54:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &page_id, 1, BNO055_TIMEOUT);
+ 253              		.loc 1 54 5 is_stmt 1 view .LVU51
+  54:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &page_id, 1, BNO055_TIMEOUT);
+ 254              		.loc 1 54 14 is_stmt 0 view .LVU52
+ 255 00a0 4FF47A73 		mov	r3, #1000
+ 256 00a4 0293     		str	r3, [sp, #8]
+ 257 00a6 0123     		movs	r3, #1
+ 258 00a8 0193     		str	r3, [sp, #4]
+ 259 00aa 05AA     		add	r2, sp, #20
+ 260 00ac 0092     		str	r2, [sp]
+ 261 00ae 0722     		movs	r2, #7
+ 262 00b0 5021     		movs	r1, #80
+ 263 00b2 2046     		mov	r0, r4
+ 264 00b4 FFF7FEFF 		bl	HAL_I2C_Mem_Write
+ 265              	.LVL22:
+  56:Core/Src/bno055.c ****     
+ 266              		.loc 1 56 5 is_stmt 1 view .LVU53
+  56:Core/Src/bno055.c ****     
+ 267              		.loc 1 56 8 is_stmt 0 view .LVU54
+ARM GAS  /tmp/ccNPUzL4.s 			page 8
+
+
+ 268 00b8 0546     		mov	r5, r0
+ 269 00ba 0028     		cmp	r0, #0
+ 270 00bc B3D1     		bne	.L6
+  59:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_UNIT_SEL_ADDR, 
+ 271              		.loc 1 59 5 is_stmt 1 view .LVU55
+  59:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Write(hi2c, BNO055_I2C_ADDR, BNO055_UNIT_SEL_ADDR, 
+ 272              		.loc 1 59 13 is_stmt 0 view .LVU56
+ 273 00be 0023     		movs	r3, #0
+ 274 00c0 8DF81330 		strb	r3, [sp, #19]
+  60:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &unit_sel, 1, BNO055_TIMEOUT);
+ 275              		.loc 1 60 5 is_stmt 1 view .LVU57
+  60:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &unit_sel, 1, BNO055_TIMEOUT);
+ 276              		.loc 1 60 14 is_stmt 0 view .LVU58
+ 277 00c4 4FF47A73 		mov	r3, #1000
+ 278 00c8 0293     		str	r3, [sp, #8]
+ 279 00ca 0123     		movs	r3, #1
+ 280 00cc 0193     		str	r3, [sp, #4]
+ 281 00ce 0DF11302 		add	r2, sp, #19
+ 282 00d2 0092     		str	r2, [sp]
+ 283 00d4 3B22     		movs	r2, #59
+ 284 00d6 5021     		movs	r1, #80
+ 285 00d8 2046     		mov	r0, r4
+ 286              	.LVL23:
+  60:Core/Src/bno055.c ****                                 I2C_MEMADD_SIZE_8BIT, &unit_sel, 1, BNO055_TIMEOUT);
+ 287              		.loc 1 60 14 view .LVU59
+ 288 00da FFF7FEFF 		bl	HAL_I2C_Mem_Write
+ 289              	.LVL24:
+  62:Core/Src/bno055.c ****     
+ 290              		.loc 1 62 5 is_stmt 1 view .LVU60
+  62:Core/Src/bno055.c ****     
+ 291              		.loc 1 62 8 is_stmt 0 view .LVU61
+ 292 00de 0546     		mov	r5, r0
+ 293 00e0 0028     		cmp	r0, #0
+ 294 00e2 A0D1     		bne	.L6
+  65:Core/Src/bno055.c ****     if (status != HAL_OK) return status;
+ 295              		.loc 1 65 5 is_stmt 1 view .LVU62
+  65:Core/Src/bno055.c ****     if (status != HAL_OK) return status;
+ 296              		.loc 1 65 14 is_stmt 0 view .LVU63
+ 297 00e4 0C21     		movs	r1, #12
+ 298 00e6 2046     		mov	r0, r4
+ 299              	.LVL25:
+  65:Core/Src/bno055.c ****     if (status != HAL_OK) return status;
+ 300              		.loc 1 65 14 view .LVU64
+ 301 00e8 FFF7FEFF 		bl	BNO055_SetMode
+ 302              	.LVL26:
+  66:Core/Src/bno055.c ****     HAL_Delay(20);
+ 303              		.loc 1 66 5 is_stmt 1 view .LVU65
+  66:Core/Src/bno055.c ****     HAL_Delay(20);
+ 304              		.loc 1 66 8 is_stmt 0 view .LVU66
+ 305 00ec 0546     		mov	r5, r0
+ 306 00ee 0028     		cmp	r0, #0
+ 307 00f0 99D1     		bne	.L6
+  67:Core/Src/bno055.c ****     
+ 308              		.loc 1 67 5 is_stmt 1 view .LVU67
+ 309 00f2 1420     		movs	r0, #20
+ 310              	.LVL27:
+  67:Core/Src/bno055.c ****     
+ARM GAS  /tmp/ccNPUzL4.s 			page 9
+
+
+ 311              		.loc 1 67 5 is_stmt 0 view .LVU68
+ 312 00f4 FFF7FEFF 		bl	HAL_Delay
+ 313              	.LVL28:
+  69:Core/Src/bno055.c **** }
+ 314              		.loc 1 69 5 is_stmt 1 view .LVU69
+  69:Core/Src/bno055.c **** }
+ 315              		.loc 1 69 12 is_stmt 0 view .LVU70
+ 316 00f8 95E7     		b	.L6
+ 317              	.LVL29:
+ 318              	.L7:
+  30:Core/Src/bno055.c ****     }
+ 319              		.loc 1 30 16 view .LVU71
+ 320 00fa 0125     		movs	r5, #1
+ 321 00fc 93E7     		b	.L6
+ 322              		.cfi_endproc
+ 323              	.LFE134:
+ 325              		.section	.text.BNO055_ReadAccel,"ax",%progbits
+ 326              		.align	1
+ 327              		.global	BNO055_ReadAccel
+ 328              		.syntax unified
+ 329              		.thumb
+ 330              		.thumb_func
+ 332              	BNO055_ReadAccel:
+ 333              	.LVL30:
+ 334              	.LFB137:
+  95:Core/Src/bno055.c **** 
+  96:Core/Src/bno055.c **** /**
+  97:Core/Src/bno055.c ****   * @brief  Read accelerometer data
+  98:Core/Src/bno055.c ****   * @param  hi2c: pointer to I2C handle
+  99:Core/Src/bno055.c ****   * @param  accel: pointer to store accelerometer data
+ 100:Core/Src/bno055.c ****   * @retval HAL status
+ 101:Core/Src/bno055.c ****   */
+ 102:Core/Src/bno055.c **** HAL_StatusTypeDef BNO055_ReadAccel(I2C_HandleTypeDef *hi2c, BNO055_Vector_t *accel)
+ 103:Core/Src/bno055.c **** {
+ 335              		.loc 1 103 1 is_stmt 1 view -0
+ 336              		.cfi_startproc
+ 337              		@ args = 0, pretend = 0, frame = 8
+ 338              		@ frame_needed = 0, uses_anonymous_args = 0
+ 339              		.loc 1 103 1 is_stmt 0 view .LVU73
+ 340 0000 10B5     		push	{r4, lr}
+ 341              	.LCFI10:
+ 342              		.cfi_def_cfa_offset 8
+ 343              		.cfi_offset 4, -8
+ 344              		.cfi_offset 14, -4
+ 345 0002 86B0     		sub	sp, sp, #24
+ 346              	.LCFI11:
+ 347              		.cfi_def_cfa_offset 32
+ 348 0004 0C46     		mov	r4, r1
+ 104:Core/Src/bno055.c ****     uint8_t buffer[6];
+ 349              		.loc 1 104 5 is_stmt 1 view .LVU74
+ 105:Core/Src/bno055.c ****     HAL_StatusTypeDef status;
+ 350              		.loc 1 105 5 view .LVU75
+ 106:Core/Src/bno055.c ****     
+ 107:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Read(hi2c, BNO055_I2C_ADDR, BNO055_ACCEL_DATA_X_LSB, 
+ 351              		.loc 1 107 5 view .LVU76
+ 352              		.loc 1 107 14 is_stmt 0 view .LVU77
+ 353 0006 4FF47A73 		mov	r3, #1000
+ARM GAS  /tmp/ccNPUzL4.s 			page 10
+
+
+ 354 000a 0293     		str	r3, [sp, #8]
+ 355 000c 0623     		movs	r3, #6
+ 356 000e 0193     		str	r3, [sp, #4]
+ 357 0010 04AB     		add	r3, sp, #16
+ 358 0012 0093     		str	r3, [sp]
+ 359 0014 0123     		movs	r3, #1
+ 360 0016 0822     		movs	r2, #8
+ 361 0018 5021     		movs	r1, #80
+ 362              	.LVL31:
+ 363              		.loc 1 107 14 view .LVU78
+ 364 001a FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 365              	.LVL32:
+ 108:Core/Src/bno055.c ****                                I2C_MEMADD_SIZE_8BIT, buffer, 6, BNO055_TIMEOUT);
+ 109:Core/Src/bno055.c ****     
+ 110:Core/Src/bno055.c ****     if (status == HAL_OK) {
+ 366              		.loc 1 110 5 is_stmt 1 view .LVU79
+ 367              		.loc 1 110 8 is_stmt 0 view .LVU80
+ 368 001e A0B9     		cbnz	r0, .L12
+ 111:Core/Src/bno055.c ****         accel->x = (int16_t)((buffer[1] << 8) | buffer[0]);
+ 369              		.loc 1 111 9 is_stmt 1 view .LVU81
+ 370              		.loc 1 111 37 is_stmt 0 view .LVU82
+ 371 0020 9DF81120 		ldrb	r2, [sp, #17]	@ zero_extendqisi2
+ 372              		.loc 1 111 55 view .LVU83
+ 373 0024 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 374              		.loc 1 111 20 view .LVU84
+ 375 0028 43EA0223 		orr	r3, r3, r2, lsl #8
+ 376              		.loc 1 111 18 view .LVU85
+ 377 002c 2380     		strh	r3, [r4]	@ movhi
+ 112:Core/Src/bno055.c ****         accel->y = (int16_t)((buffer[3] << 8) | buffer[2]);
+ 378              		.loc 1 112 9 is_stmt 1 view .LVU86
+ 379              		.loc 1 112 37 is_stmt 0 view .LVU87
+ 380 002e 9DF81320 		ldrb	r2, [sp, #19]	@ zero_extendqisi2
+ 381              		.loc 1 112 55 view .LVU88
+ 382 0032 9DF81230 		ldrb	r3, [sp, #18]	@ zero_extendqisi2
+ 383              		.loc 1 112 20 view .LVU89
+ 384 0036 43EA0223 		orr	r3, r3, r2, lsl #8
+ 385              		.loc 1 112 18 view .LVU90
+ 386 003a 6380     		strh	r3, [r4, #2]	@ movhi
+ 113:Core/Src/bno055.c ****         accel->z = (int16_t)((buffer[5] << 8) | buffer[4]);
+ 387              		.loc 1 113 9 is_stmt 1 view .LVU91
+ 388              		.loc 1 113 37 is_stmt 0 view .LVU92
+ 389 003c 9DF81520 		ldrb	r2, [sp, #21]	@ zero_extendqisi2
+ 390              		.loc 1 113 55 view .LVU93
+ 391 0040 9DF81430 		ldrb	r3, [sp, #20]	@ zero_extendqisi2
+ 392              		.loc 1 113 20 view .LVU94
+ 393 0044 43EA0223 		orr	r3, r3, r2, lsl #8
+ 394              		.loc 1 113 18 view .LVU95
+ 395 0048 A380     		strh	r3, [r4, #4]	@ movhi
+ 396              	.L12:
+ 114:Core/Src/bno055.c ****     }
+ 115:Core/Src/bno055.c ****     
+ 116:Core/Src/bno055.c ****     return status;
+ 397              		.loc 1 116 5 is_stmt 1 view .LVU96
+ 117:Core/Src/bno055.c **** }
+ 398              		.loc 1 117 1 is_stmt 0 view .LVU97
+ 399 004a 06B0     		add	sp, sp, #24
+ 400              	.LCFI12:
+ARM GAS  /tmp/ccNPUzL4.s 			page 11
+
+
+ 401              		.cfi_def_cfa_offset 8
+ 402              		@ sp needed
+ 403 004c 10BD     		pop	{r4, pc}
+ 404              		.loc 1 117 1 view .LVU98
+ 405              		.cfi_endproc
+ 406              	.LFE137:
+ 408              		.section	.text.BNO055_ReadGyro,"ax",%progbits
+ 409              		.align	1
+ 410              		.global	BNO055_ReadGyro
+ 411              		.syntax unified
+ 412              		.thumb
+ 413              		.thumb_func
+ 415              	BNO055_ReadGyro:
+ 416              	.LVL33:
+ 417              	.LFB138:
+ 118:Core/Src/bno055.c **** 
+ 119:Core/Src/bno055.c **** /**
+ 120:Core/Src/bno055.c ****   * @brief  Read gyroscope data
+ 121:Core/Src/bno055.c ****   * @param  hi2c: pointer to I2C handle
+ 122:Core/Src/bno055.c ****   * @param  gyro: pointer to store gyroscope data
+ 123:Core/Src/bno055.c ****   * @retval HAL status
+ 124:Core/Src/bno055.c ****   */
+ 125:Core/Src/bno055.c **** HAL_StatusTypeDef BNO055_ReadGyro(I2C_HandleTypeDef *hi2c, BNO055_Vector_t *gyro)
+ 126:Core/Src/bno055.c **** {
+ 418              		.loc 1 126 1 is_stmt 1 view -0
+ 419              		.cfi_startproc
+ 420              		@ args = 0, pretend = 0, frame = 8
+ 421              		@ frame_needed = 0, uses_anonymous_args = 0
+ 422              		.loc 1 126 1 is_stmt 0 view .LVU100
+ 423 0000 10B5     		push	{r4, lr}
+ 424              	.LCFI13:
+ 425              		.cfi_def_cfa_offset 8
+ 426              		.cfi_offset 4, -8
+ 427              		.cfi_offset 14, -4
+ 428 0002 86B0     		sub	sp, sp, #24
+ 429              	.LCFI14:
+ 430              		.cfi_def_cfa_offset 32
+ 431 0004 0C46     		mov	r4, r1
+ 127:Core/Src/bno055.c ****     uint8_t buffer[6];
+ 432              		.loc 1 127 5 is_stmt 1 view .LVU101
+ 128:Core/Src/bno055.c ****     HAL_StatusTypeDef status;
+ 433              		.loc 1 128 5 view .LVU102
+ 129:Core/Src/bno055.c ****     
+ 130:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Read(hi2c, BNO055_I2C_ADDR, BNO055_GYRO_DATA_X_LSB, 
+ 434              		.loc 1 130 5 view .LVU103
+ 435              		.loc 1 130 14 is_stmt 0 view .LVU104
+ 436 0006 4FF47A73 		mov	r3, #1000
+ 437 000a 0293     		str	r3, [sp, #8]
+ 438 000c 0623     		movs	r3, #6
+ 439 000e 0193     		str	r3, [sp, #4]
+ 440 0010 04AB     		add	r3, sp, #16
+ 441 0012 0093     		str	r3, [sp]
+ 442 0014 0123     		movs	r3, #1
+ 443 0016 1422     		movs	r2, #20
+ 444 0018 5021     		movs	r1, #80
+ 445              	.LVL34:
+ 446              		.loc 1 130 14 view .LVU105
+ARM GAS  /tmp/ccNPUzL4.s 			page 12
+
+
+ 447 001a FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 448              	.LVL35:
+ 131:Core/Src/bno055.c ****                                I2C_MEMADD_SIZE_8BIT, buffer, 6, BNO055_TIMEOUT);
+ 132:Core/Src/bno055.c ****     
+ 133:Core/Src/bno055.c ****     if (status == HAL_OK) {
+ 449              		.loc 1 133 5 is_stmt 1 view .LVU106
+ 450              		.loc 1 133 8 is_stmt 0 view .LVU107
+ 451 001e A0B9     		cbnz	r0, .L15
+ 134:Core/Src/bno055.c ****         gyro->x = (int16_t)((buffer[1] << 8) | buffer[0]);
+ 452              		.loc 1 134 9 is_stmt 1 view .LVU108
+ 453              		.loc 1 134 36 is_stmt 0 view .LVU109
+ 454 0020 9DF81120 		ldrb	r2, [sp, #17]	@ zero_extendqisi2
+ 455              		.loc 1 134 54 view .LVU110
+ 456 0024 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 457              		.loc 1 134 19 view .LVU111
+ 458 0028 43EA0223 		orr	r3, r3, r2, lsl #8
+ 459              		.loc 1 134 17 view .LVU112
+ 460 002c 2380     		strh	r3, [r4]	@ movhi
+ 135:Core/Src/bno055.c ****         gyro->y = (int16_t)((buffer[3] << 8) | buffer[2]);
+ 461              		.loc 1 135 9 is_stmt 1 view .LVU113
+ 462              		.loc 1 135 36 is_stmt 0 view .LVU114
+ 463 002e 9DF81320 		ldrb	r2, [sp, #19]	@ zero_extendqisi2
+ 464              		.loc 1 135 54 view .LVU115
+ 465 0032 9DF81230 		ldrb	r3, [sp, #18]	@ zero_extendqisi2
+ 466              		.loc 1 135 19 view .LVU116
+ 467 0036 43EA0223 		orr	r3, r3, r2, lsl #8
+ 468              		.loc 1 135 17 view .LVU117
+ 469 003a 6380     		strh	r3, [r4, #2]	@ movhi
+ 136:Core/Src/bno055.c ****         gyro->z = (int16_t)((buffer[5] << 8) | buffer[4]);
+ 470              		.loc 1 136 9 is_stmt 1 view .LVU118
+ 471              		.loc 1 136 36 is_stmt 0 view .LVU119
+ 472 003c 9DF81520 		ldrb	r2, [sp, #21]	@ zero_extendqisi2
+ 473              		.loc 1 136 54 view .LVU120
+ 474 0040 9DF81430 		ldrb	r3, [sp, #20]	@ zero_extendqisi2
+ 475              		.loc 1 136 19 view .LVU121
+ 476 0044 43EA0223 		orr	r3, r3, r2, lsl #8
+ 477              		.loc 1 136 17 view .LVU122
+ 478 0048 A380     		strh	r3, [r4, #4]	@ movhi
+ 479              	.L15:
+ 137:Core/Src/bno055.c ****     }
+ 138:Core/Src/bno055.c ****     
+ 139:Core/Src/bno055.c ****     return status;
+ 480              		.loc 1 139 5 is_stmt 1 view .LVU123
+ 140:Core/Src/bno055.c **** }
+ 481              		.loc 1 140 1 is_stmt 0 view .LVU124
+ 482 004a 06B0     		add	sp, sp, #24
+ 483              	.LCFI15:
+ 484              		.cfi_def_cfa_offset 8
+ 485              		@ sp needed
+ 486 004c 10BD     		pop	{r4, pc}
+ 487              		.loc 1 140 1 view .LVU125
+ 488              		.cfi_endproc
+ 489              	.LFE138:
+ 491              		.section	.text.BNO055_ReadMag,"ax",%progbits
+ 492              		.align	1
+ 493              		.global	BNO055_ReadMag
+ 494              		.syntax unified
+ARM GAS  /tmp/ccNPUzL4.s 			page 13
+
+
+ 495              		.thumb
+ 496              		.thumb_func
+ 498              	BNO055_ReadMag:
+ 499              	.LVL36:
+ 500              	.LFB139:
+ 141:Core/Src/bno055.c **** 
+ 142:Core/Src/bno055.c **** /**
+ 143:Core/Src/bno055.c ****   * @brief  Read magnetometer data
+ 144:Core/Src/bno055.c ****   * @param  hi2c: pointer to I2C handle
+ 145:Core/Src/bno055.c ****   * @param  mag: pointer to store magnetometer data
+ 146:Core/Src/bno055.c ****   * @retval HAL status
+ 147:Core/Src/bno055.c ****   */
+ 148:Core/Src/bno055.c **** HAL_StatusTypeDef BNO055_ReadMag(I2C_HandleTypeDef *hi2c, BNO055_Vector_t *mag)
+ 149:Core/Src/bno055.c **** {
+ 501              		.loc 1 149 1 is_stmt 1 view -0
+ 502              		.cfi_startproc
+ 503              		@ args = 0, pretend = 0, frame = 8
+ 504              		@ frame_needed = 0, uses_anonymous_args = 0
+ 505              		.loc 1 149 1 is_stmt 0 view .LVU127
+ 506 0000 10B5     		push	{r4, lr}
+ 507              	.LCFI16:
+ 508              		.cfi_def_cfa_offset 8
+ 509              		.cfi_offset 4, -8
+ 510              		.cfi_offset 14, -4
+ 511 0002 86B0     		sub	sp, sp, #24
+ 512              	.LCFI17:
+ 513              		.cfi_def_cfa_offset 32
+ 514 0004 0C46     		mov	r4, r1
+ 150:Core/Src/bno055.c ****     uint8_t buffer[6];
+ 515              		.loc 1 150 5 is_stmt 1 view .LVU128
+ 151:Core/Src/bno055.c ****     HAL_StatusTypeDef status;
+ 516              		.loc 1 151 5 view .LVU129
+ 152:Core/Src/bno055.c ****     
+ 153:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Read(hi2c, BNO055_I2C_ADDR, BNO055_MAG_DATA_X_LSB, 
+ 517              		.loc 1 153 5 view .LVU130
+ 518              		.loc 1 153 14 is_stmt 0 view .LVU131
+ 519 0006 4FF47A73 		mov	r3, #1000
+ 520 000a 0293     		str	r3, [sp, #8]
+ 521 000c 0623     		movs	r3, #6
+ 522 000e 0193     		str	r3, [sp, #4]
+ 523 0010 04AB     		add	r3, sp, #16
+ 524 0012 0093     		str	r3, [sp]
+ 525 0014 0123     		movs	r3, #1
+ 526 0016 0E22     		movs	r2, #14
+ 527 0018 5021     		movs	r1, #80
+ 528              	.LVL37:
+ 529              		.loc 1 153 14 view .LVU132
+ 530 001a FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 531              	.LVL38:
+ 154:Core/Src/bno055.c ****                                I2C_MEMADD_SIZE_8BIT, buffer, 6, BNO055_TIMEOUT);
+ 155:Core/Src/bno055.c ****     
+ 156:Core/Src/bno055.c ****     if (status == HAL_OK) {
+ 532              		.loc 1 156 5 is_stmt 1 view .LVU133
+ 533              		.loc 1 156 8 is_stmt 0 view .LVU134
+ 534 001e A0B9     		cbnz	r0, .L18
+ 157:Core/Src/bno055.c ****         mag->x = (int16_t)((buffer[1] << 8) | buffer[0]);
+ 535              		.loc 1 157 9 is_stmt 1 view .LVU135
+ARM GAS  /tmp/ccNPUzL4.s 			page 14
+
+
+ 536              		.loc 1 157 35 is_stmt 0 view .LVU136
+ 537 0020 9DF81120 		ldrb	r2, [sp, #17]	@ zero_extendqisi2
+ 538              		.loc 1 157 53 view .LVU137
+ 539 0024 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 540              		.loc 1 157 18 view .LVU138
+ 541 0028 43EA0223 		orr	r3, r3, r2, lsl #8
+ 542              		.loc 1 157 16 view .LVU139
+ 543 002c 2380     		strh	r3, [r4]	@ movhi
+ 158:Core/Src/bno055.c ****         mag->y = (int16_t)((buffer[3] << 8) | buffer[2]);
+ 544              		.loc 1 158 9 is_stmt 1 view .LVU140
+ 545              		.loc 1 158 35 is_stmt 0 view .LVU141
+ 546 002e 9DF81320 		ldrb	r2, [sp, #19]	@ zero_extendqisi2
+ 547              		.loc 1 158 53 view .LVU142
+ 548 0032 9DF81230 		ldrb	r3, [sp, #18]	@ zero_extendqisi2
+ 549              		.loc 1 158 18 view .LVU143
+ 550 0036 43EA0223 		orr	r3, r3, r2, lsl #8
+ 551              		.loc 1 158 16 view .LVU144
+ 552 003a 6380     		strh	r3, [r4, #2]	@ movhi
+ 159:Core/Src/bno055.c ****         mag->z = (int16_t)((buffer[5] << 8) | buffer[4]);
+ 553              		.loc 1 159 9 is_stmt 1 view .LVU145
+ 554              		.loc 1 159 35 is_stmt 0 view .LVU146
+ 555 003c 9DF81520 		ldrb	r2, [sp, #21]	@ zero_extendqisi2
+ 556              		.loc 1 159 53 view .LVU147
+ 557 0040 9DF81430 		ldrb	r3, [sp, #20]	@ zero_extendqisi2
+ 558              		.loc 1 159 18 view .LVU148
+ 559 0044 43EA0223 		orr	r3, r3, r2, lsl #8
+ 560              		.loc 1 159 16 view .LVU149
+ 561 0048 A380     		strh	r3, [r4, #4]	@ movhi
+ 562              	.L18:
+ 160:Core/Src/bno055.c ****     }
+ 161:Core/Src/bno055.c ****     
+ 162:Core/Src/bno055.c ****     return status;
+ 563              		.loc 1 162 5 is_stmt 1 view .LVU150
+ 163:Core/Src/bno055.c **** }
+ 564              		.loc 1 163 1 is_stmt 0 view .LVU151
+ 565 004a 06B0     		add	sp, sp, #24
+ 566              	.LCFI18:
+ 567              		.cfi_def_cfa_offset 8
+ 568              		@ sp needed
+ 569 004c 10BD     		pop	{r4, pc}
+ 570              		.loc 1 163 1 view .LVU152
+ 571              		.cfi_endproc
+ 572              	.LFE139:
+ 574              		.section	.text.BNO055_ReadEuler,"ax",%progbits
+ 575              		.align	1
+ 576              		.global	BNO055_ReadEuler
+ 577              		.syntax unified
+ 578              		.thumb
+ 579              		.thumb_func
+ 581              	BNO055_ReadEuler:
+ 582              	.LVL39:
+ 583              	.LFB140:
+ 164:Core/Src/bno055.c **** 
+ 165:Core/Src/bno055.c **** /**
+ 166:Core/Src/bno055.c ****   * @brief  Read Euler angles
+ 167:Core/Src/bno055.c ****   * @param  hi2c: pointer to I2C handle
+ 168:Core/Src/bno055.c ****   * @param  euler: pointer to store Euler angles (heading, roll, pitch)
+ARM GAS  /tmp/ccNPUzL4.s 			page 15
+
+
+ 169:Core/Src/bno055.c ****   * @retval HAL status
+ 170:Core/Src/bno055.c ****   */
+ 171:Core/Src/bno055.c **** HAL_StatusTypeDef BNO055_ReadEuler(I2C_HandleTypeDef *hi2c, BNO055_Vector_t *euler)
+ 172:Core/Src/bno055.c **** {
+ 584              		.loc 1 172 1 is_stmt 1 view -0
+ 585              		.cfi_startproc
+ 586              		@ args = 0, pretend = 0, frame = 8
+ 587              		@ frame_needed = 0, uses_anonymous_args = 0
+ 588              		.loc 1 172 1 is_stmt 0 view .LVU154
+ 589 0000 10B5     		push	{r4, lr}
+ 590              	.LCFI19:
+ 591              		.cfi_def_cfa_offset 8
+ 592              		.cfi_offset 4, -8
+ 593              		.cfi_offset 14, -4
+ 594 0002 86B0     		sub	sp, sp, #24
+ 595              	.LCFI20:
+ 596              		.cfi_def_cfa_offset 32
+ 597 0004 0C46     		mov	r4, r1
+ 173:Core/Src/bno055.c ****     uint8_t buffer[6];
+ 598              		.loc 1 173 5 is_stmt 1 view .LVU155
+ 174:Core/Src/bno055.c ****     HAL_StatusTypeDef status;
+ 599              		.loc 1 174 5 view .LVU156
+ 175:Core/Src/bno055.c ****     
+ 176:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Read(hi2c, BNO055_I2C_ADDR, BNO055_EULER_H_LSB, 
+ 600              		.loc 1 176 5 view .LVU157
+ 601              		.loc 1 176 14 is_stmt 0 view .LVU158
+ 602 0006 4FF47A73 		mov	r3, #1000
+ 603 000a 0293     		str	r3, [sp, #8]
+ 604 000c 0623     		movs	r3, #6
+ 605 000e 0193     		str	r3, [sp, #4]
+ 606 0010 04AB     		add	r3, sp, #16
+ 607 0012 0093     		str	r3, [sp]
+ 608 0014 0123     		movs	r3, #1
+ 609 0016 1A22     		movs	r2, #26
+ 610 0018 5021     		movs	r1, #80
+ 611              	.LVL40:
+ 612              		.loc 1 176 14 view .LVU159
+ 613 001a FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 614              	.LVL41:
+ 177:Core/Src/bno055.c ****                                I2C_MEMADD_SIZE_8BIT, buffer, 6, BNO055_TIMEOUT);
+ 178:Core/Src/bno055.c ****     
+ 179:Core/Src/bno055.c ****     if (status == HAL_OK) {
+ 615              		.loc 1 179 5 is_stmt 1 view .LVU160
+ 616              		.loc 1 179 8 is_stmt 0 view .LVU161
+ 617 001e A0B9     		cbnz	r0, .L21
+ 180:Core/Src/bno055.c ****         euler->x = (int16_t)((buffer[1] << 8) | buffer[0]); // Heading
+ 618              		.loc 1 180 9 is_stmt 1 view .LVU162
+ 619              		.loc 1 180 37 is_stmt 0 view .LVU163
+ 620 0020 9DF81120 		ldrb	r2, [sp, #17]	@ zero_extendqisi2
+ 621              		.loc 1 180 55 view .LVU164
+ 622 0024 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 623              		.loc 1 180 20 view .LVU165
+ 624 0028 43EA0223 		orr	r3, r3, r2, lsl #8
+ 625              		.loc 1 180 18 view .LVU166
+ 626 002c 2380     		strh	r3, [r4]	@ movhi
+ 181:Core/Src/bno055.c ****         euler->y = (int16_t)((buffer[3] << 8) | buffer[2]); // Roll
+ 627              		.loc 1 181 9 is_stmt 1 view .LVU167
+ARM GAS  /tmp/ccNPUzL4.s 			page 16
+
+
+ 628              		.loc 1 181 37 is_stmt 0 view .LVU168
+ 629 002e 9DF81320 		ldrb	r2, [sp, #19]	@ zero_extendqisi2
+ 630              		.loc 1 181 55 view .LVU169
+ 631 0032 9DF81230 		ldrb	r3, [sp, #18]	@ zero_extendqisi2
+ 632              		.loc 1 181 20 view .LVU170
+ 633 0036 43EA0223 		orr	r3, r3, r2, lsl #8
+ 634              		.loc 1 181 18 view .LVU171
+ 635 003a 6380     		strh	r3, [r4, #2]	@ movhi
+ 182:Core/Src/bno055.c ****         euler->z = (int16_t)((buffer[5] << 8) | buffer[4]); // Pitch
+ 636              		.loc 1 182 9 is_stmt 1 view .LVU172
+ 637              		.loc 1 182 37 is_stmt 0 view .LVU173
+ 638 003c 9DF81520 		ldrb	r2, [sp, #21]	@ zero_extendqisi2
+ 639              		.loc 1 182 55 view .LVU174
+ 640 0040 9DF81430 		ldrb	r3, [sp, #20]	@ zero_extendqisi2
+ 641              		.loc 1 182 20 view .LVU175
+ 642 0044 43EA0223 		orr	r3, r3, r2, lsl #8
+ 643              		.loc 1 182 18 view .LVU176
+ 644 0048 A380     		strh	r3, [r4, #4]	@ movhi
+ 645              	.L21:
+ 183:Core/Src/bno055.c ****     }
+ 184:Core/Src/bno055.c ****     
+ 185:Core/Src/bno055.c ****     return status;
+ 646              		.loc 1 185 5 is_stmt 1 view .LVU177
+ 186:Core/Src/bno055.c **** }
+ 647              		.loc 1 186 1 is_stmt 0 view .LVU178
+ 648 004a 06B0     		add	sp, sp, #24
+ 649              	.LCFI21:
+ 650              		.cfi_def_cfa_offset 8
+ 651              		@ sp needed
+ 652 004c 10BD     		pop	{r4, pc}
+ 653              		.loc 1 186 1 view .LVU179
+ 654              		.cfi_endproc
+ 655              	.LFE140:
+ 657              		.section	.text.BNO055_ReadQuaternion,"ax",%progbits
+ 658              		.align	1
+ 659              		.global	BNO055_ReadQuaternion
+ 660              		.syntax unified
+ 661              		.thumb
+ 662              		.thumb_func
+ 664              	BNO055_ReadQuaternion:
+ 665              	.LVL42:
+ 666              	.LFB141:
+ 187:Core/Src/bno055.c **** 
+ 188:Core/Src/bno055.c **** /**
+ 189:Core/Src/bno055.c ****   * @brief  Read quaternion data
+ 190:Core/Src/bno055.c ****   * @param  hi2c: pointer to I2C handle
+ 191:Core/Src/bno055.c ****   * @param  quat: pointer to store quaternion data
+ 192:Core/Src/bno055.c ****   * @retval HAL status
+ 193:Core/Src/bno055.c ****   */
+ 194:Core/Src/bno055.c **** HAL_StatusTypeDef BNO055_ReadQuaternion(I2C_HandleTypeDef *hi2c, BNO055_Quaternion_t *quat)
+ 195:Core/Src/bno055.c **** {
+ 667              		.loc 1 195 1 is_stmt 1 view -0
+ 668              		.cfi_startproc
+ 669              		@ args = 0, pretend = 0, frame = 8
+ 670              		@ frame_needed = 0, uses_anonymous_args = 0
+ 671              		.loc 1 195 1 is_stmt 0 view .LVU181
+ 672 0000 10B5     		push	{r4, lr}
+ARM GAS  /tmp/ccNPUzL4.s 			page 17
+
+
+ 673              	.LCFI22:
+ 674              		.cfi_def_cfa_offset 8
+ 675              		.cfi_offset 4, -8
+ 676              		.cfi_offset 14, -4
+ 677 0002 86B0     		sub	sp, sp, #24
+ 678              	.LCFI23:
+ 679              		.cfi_def_cfa_offset 32
+ 680 0004 0C46     		mov	r4, r1
+ 196:Core/Src/bno055.c ****     uint8_t buffer[8];
+ 681              		.loc 1 196 5 is_stmt 1 view .LVU182
+ 197:Core/Src/bno055.c ****     HAL_StatusTypeDef status;
+ 682              		.loc 1 197 5 view .LVU183
+ 198:Core/Src/bno055.c ****     
+ 199:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Read(hi2c, BNO055_I2C_ADDR, BNO055_QUAT_DATA_W_LSB, 
+ 683              		.loc 1 199 5 view .LVU184
+ 684              		.loc 1 199 14 is_stmt 0 view .LVU185
+ 685 0006 4FF47A73 		mov	r3, #1000
+ 686 000a 0293     		str	r3, [sp, #8]
+ 687 000c 0823     		movs	r3, #8
+ 688 000e 0193     		str	r3, [sp, #4]
+ 689 0010 04AB     		add	r3, sp, #16
+ 690 0012 0093     		str	r3, [sp]
+ 691 0014 0123     		movs	r3, #1
+ 692 0016 2022     		movs	r2, #32
+ 693 0018 5021     		movs	r1, #80
+ 694              	.LVL43:
+ 695              		.loc 1 199 14 view .LVU186
+ 696 001a FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 697              	.LVL44:
+ 200:Core/Src/bno055.c ****                                I2C_MEMADD_SIZE_8BIT, buffer, 8, BNO055_TIMEOUT);
+ 201:Core/Src/bno055.c ****     
+ 202:Core/Src/bno055.c ****     if (status == HAL_OK) {
+ 698              		.loc 1 202 5 is_stmt 1 view .LVU187
+ 699              		.loc 1 202 8 is_stmt 0 view .LVU188
+ 700 001e D8B9     		cbnz	r0, .L24
+ 203:Core/Src/bno055.c ****         quat->w = (int16_t)((buffer[1] << 8) | buffer[0]);
+ 701              		.loc 1 203 9 is_stmt 1 view .LVU189
+ 702              		.loc 1 203 36 is_stmt 0 view .LVU190
+ 703 0020 9DF81120 		ldrb	r2, [sp, #17]	@ zero_extendqisi2
+ 704              		.loc 1 203 54 view .LVU191
+ 705 0024 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 706              		.loc 1 203 19 view .LVU192
+ 707 0028 43EA0223 		orr	r3, r3, r2, lsl #8
+ 708              		.loc 1 203 17 view .LVU193
+ 709 002c 2380     		strh	r3, [r4]	@ movhi
+ 204:Core/Src/bno055.c ****         quat->x = (int16_t)((buffer[3] << 8) | buffer[2]);
+ 710              		.loc 1 204 9 is_stmt 1 view .LVU194
+ 711              		.loc 1 204 36 is_stmt 0 view .LVU195
+ 712 002e 9DF81320 		ldrb	r2, [sp, #19]	@ zero_extendqisi2
+ 713              		.loc 1 204 54 view .LVU196
+ 714 0032 9DF81230 		ldrb	r3, [sp, #18]	@ zero_extendqisi2
+ 715              		.loc 1 204 19 view .LVU197
+ 716 0036 43EA0223 		orr	r3, r3, r2, lsl #8
+ 717              		.loc 1 204 17 view .LVU198
+ 718 003a 6380     		strh	r3, [r4, #2]	@ movhi
+ 205:Core/Src/bno055.c ****         quat->y = (int16_t)((buffer[5] << 8) | buffer[4]);
+ 719              		.loc 1 205 9 is_stmt 1 view .LVU199
+ARM GAS  /tmp/ccNPUzL4.s 			page 18
+
+
+ 720              		.loc 1 205 36 is_stmt 0 view .LVU200
+ 721 003c 9DF81520 		ldrb	r2, [sp, #21]	@ zero_extendqisi2
+ 722              		.loc 1 205 54 view .LVU201
+ 723 0040 9DF81430 		ldrb	r3, [sp, #20]	@ zero_extendqisi2
+ 724              		.loc 1 205 19 view .LVU202
+ 725 0044 43EA0223 		orr	r3, r3, r2, lsl #8
+ 726              		.loc 1 205 17 view .LVU203
+ 727 0048 A380     		strh	r3, [r4, #4]	@ movhi
+ 206:Core/Src/bno055.c ****         quat->z = (int16_t)((buffer[7] << 8) | buffer[6]);
+ 728              		.loc 1 206 9 is_stmt 1 view .LVU204
+ 729              		.loc 1 206 36 is_stmt 0 view .LVU205
+ 730 004a 9DF81720 		ldrb	r2, [sp, #23]	@ zero_extendqisi2
+ 731              		.loc 1 206 54 view .LVU206
+ 732 004e 9DF81630 		ldrb	r3, [sp, #22]	@ zero_extendqisi2
+ 733              		.loc 1 206 19 view .LVU207
+ 734 0052 43EA0223 		orr	r3, r3, r2, lsl #8
+ 735              		.loc 1 206 17 view .LVU208
+ 736 0056 E380     		strh	r3, [r4, #6]	@ movhi
+ 737              	.L24:
+ 207:Core/Src/bno055.c ****     }
+ 208:Core/Src/bno055.c ****     
+ 209:Core/Src/bno055.c ****     return status;
+ 738              		.loc 1 209 5 is_stmt 1 view .LVU209
+ 210:Core/Src/bno055.c **** }
+ 739              		.loc 1 210 1 is_stmt 0 view .LVU210
+ 740 0058 06B0     		add	sp, sp, #24
+ 741              	.LCFI24:
+ 742              		.cfi_def_cfa_offset 8
+ 743              		@ sp needed
+ 744 005a 10BD     		pop	{r4, pc}
+ 745              		.loc 1 210 1 view .LVU211
+ 746              		.cfi_endproc
+ 747              	.LFE141:
+ 749              		.section	.text.BNO055_ReadLinearAccel,"ax",%progbits
+ 750              		.align	1
+ 751              		.global	BNO055_ReadLinearAccel
+ 752              		.syntax unified
+ 753              		.thumb
+ 754              		.thumb_func
+ 756              	BNO055_ReadLinearAccel:
+ 757              	.LVL45:
+ 758              	.LFB142:
+ 211:Core/Src/bno055.c **** 
+ 212:Core/Src/bno055.c **** /**
+ 213:Core/Src/bno055.c ****   * @brief  Read linear acceleration data
+ 214:Core/Src/bno055.c ****   * @param  hi2c: pointer to I2C handle
+ 215:Core/Src/bno055.c ****   * @param  linear: pointer to store linear acceleration data
+ 216:Core/Src/bno055.c ****   * @retval HAL status
+ 217:Core/Src/bno055.c ****   */
+ 218:Core/Src/bno055.c **** HAL_StatusTypeDef BNO055_ReadLinearAccel(I2C_HandleTypeDef *hi2c, BNO055_Vector_t *linear)
+ 219:Core/Src/bno055.c **** {
+ 759              		.loc 1 219 1 is_stmt 1 view -0
+ 760              		.cfi_startproc
+ 761              		@ args = 0, pretend = 0, frame = 8
+ 762              		@ frame_needed = 0, uses_anonymous_args = 0
+ 763              		.loc 1 219 1 is_stmt 0 view .LVU213
+ 764 0000 10B5     		push	{r4, lr}
+ARM GAS  /tmp/ccNPUzL4.s 			page 19
+
+
+ 765              	.LCFI25:
+ 766              		.cfi_def_cfa_offset 8
+ 767              		.cfi_offset 4, -8
+ 768              		.cfi_offset 14, -4
+ 769 0002 86B0     		sub	sp, sp, #24
+ 770              	.LCFI26:
+ 771              		.cfi_def_cfa_offset 32
+ 772 0004 0C46     		mov	r4, r1
+ 220:Core/Src/bno055.c ****     uint8_t buffer[6];
+ 773              		.loc 1 220 5 is_stmt 1 view .LVU214
+ 221:Core/Src/bno055.c ****     HAL_StatusTypeDef status;
+ 774              		.loc 1 221 5 view .LVU215
+ 222:Core/Src/bno055.c ****     
+ 223:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Read(hi2c, BNO055_I2C_ADDR, BNO055_LINEAR_ACCEL_X_LSB, 
+ 775              		.loc 1 223 5 view .LVU216
+ 776              		.loc 1 223 14 is_stmt 0 view .LVU217
+ 777 0006 4FF47A73 		mov	r3, #1000
+ 778 000a 0293     		str	r3, [sp, #8]
+ 779 000c 0623     		movs	r3, #6
+ 780 000e 0193     		str	r3, [sp, #4]
+ 781 0010 04AB     		add	r3, sp, #16
+ 782 0012 0093     		str	r3, [sp]
+ 783 0014 0123     		movs	r3, #1
+ 784 0016 2822     		movs	r2, #40
+ 785 0018 5021     		movs	r1, #80
+ 786              	.LVL46:
+ 787              		.loc 1 223 14 view .LVU218
+ 788 001a FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 789              	.LVL47:
+ 224:Core/Src/bno055.c ****                                I2C_MEMADD_SIZE_8BIT, buffer, 6, BNO055_TIMEOUT);
+ 225:Core/Src/bno055.c ****     
+ 226:Core/Src/bno055.c ****     if (status == HAL_OK) {
+ 790              		.loc 1 226 5 is_stmt 1 view .LVU219
+ 791              		.loc 1 226 8 is_stmt 0 view .LVU220
+ 792 001e A0B9     		cbnz	r0, .L27
+ 227:Core/Src/bno055.c ****         linear->x = (int16_t)((buffer[1] << 8) | buffer[0]);
+ 793              		.loc 1 227 9 is_stmt 1 view .LVU221
+ 794              		.loc 1 227 38 is_stmt 0 view .LVU222
+ 795 0020 9DF81120 		ldrb	r2, [sp, #17]	@ zero_extendqisi2
+ 796              		.loc 1 227 56 view .LVU223
+ 797 0024 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 798              		.loc 1 227 21 view .LVU224
+ 799 0028 43EA0223 		orr	r3, r3, r2, lsl #8
+ 800              		.loc 1 227 19 view .LVU225
+ 801 002c 2380     		strh	r3, [r4]	@ movhi
+ 228:Core/Src/bno055.c ****         linear->y = (int16_t)((buffer[3] << 8) | buffer[2]);
+ 802              		.loc 1 228 9 is_stmt 1 view .LVU226
+ 803              		.loc 1 228 38 is_stmt 0 view .LVU227
+ 804 002e 9DF81320 		ldrb	r2, [sp, #19]	@ zero_extendqisi2
+ 805              		.loc 1 228 56 view .LVU228
+ 806 0032 9DF81230 		ldrb	r3, [sp, #18]	@ zero_extendqisi2
+ 807              		.loc 1 228 21 view .LVU229
+ 808 0036 43EA0223 		orr	r3, r3, r2, lsl #8
+ 809              		.loc 1 228 19 view .LVU230
+ 810 003a 6380     		strh	r3, [r4, #2]	@ movhi
+ 229:Core/Src/bno055.c ****         linear->z = (int16_t)((buffer[5] << 8) | buffer[4]);
+ 811              		.loc 1 229 9 is_stmt 1 view .LVU231
+ARM GAS  /tmp/ccNPUzL4.s 			page 20
+
+
+ 812              		.loc 1 229 38 is_stmt 0 view .LVU232
+ 813 003c 9DF81520 		ldrb	r2, [sp, #21]	@ zero_extendqisi2
+ 814              		.loc 1 229 56 view .LVU233
+ 815 0040 9DF81430 		ldrb	r3, [sp, #20]	@ zero_extendqisi2
+ 816              		.loc 1 229 21 view .LVU234
+ 817 0044 43EA0223 		orr	r3, r3, r2, lsl #8
+ 818              		.loc 1 229 19 view .LVU235
+ 819 0048 A380     		strh	r3, [r4, #4]	@ movhi
+ 820              	.L27:
+ 230:Core/Src/bno055.c ****     }
+ 231:Core/Src/bno055.c ****     
+ 232:Core/Src/bno055.c ****     return status;
+ 821              		.loc 1 232 5 is_stmt 1 view .LVU236
+ 233:Core/Src/bno055.c **** }
+ 822              		.loc 1 233 1 is_stmt 0 view .LVU237
+ 823 004a 06B0     		add	sp, sp, #24
+ 824              	.LCFI27:
+ 825              		.cfi_def_cfa_offset 8
+ 826              		@ sp needed
+ 827 004c 10BD     		pop	{r4, pc}
+ 828              		.loc 1 233 1 view .LVU238
+ 829              		.cfi_endproc
+ 830              	.LFE142:
+ 832              		.section	.text.BNO055_ReadGravity,"ax",%progbits
+ 833              		.align	1
+ 834              		.global	BNO055_ReadGravity
+ 835              		.syntax unified
+ 836              		.thumb
+ 837              		.thumb_func
+ 839              	BNO055_ReadGravity:
+ 840              	.LVL48:
+ 841              	.LFB143:
+ 234:Core/Src/bno055.c **** 
+ 235:Core/Src/bno055.c **** /**
+ 236:Core/Src/bno055.c ****   * @brief  Read gravity vector
+ 237:Core/Src/bno055.c ****   * @param  hi2c: pointer to I2C handle
+ 238:Core/Src/bno055.c ****   * @param  gravity: pointer to store gravity vector data
+ 239:Core/Src/bno055.c ****   * @retval HAL status
+ 240:Core/Src/bno055.c ****   */
+ 241:Core/Src/bno055.c **** HAL_StatusTypeDef BNO055_ReadGravity(I2C_HandleTypeDef *hi2c, BNO055_Vector_t *gravity)
+ 242:Core/Src/bno055.c **** {
+ 842              		.loc 1 242 1 is_stmt 1 view -0
+ 843              		.cfi_startproc
+ 844              		@ args = 0, pretend = 0, frame = 8
+ 845              		@ frame_needed = 0, uses_anonymous_args = 0
+ 846              		.loc 1 242 1 is_stmt 0 view .LVU240
+ 847 0000 10B5     		push	{r4, lr}
+ 848              	.LCFI28:
+ 849              		.cfi_def_cfa_offset 8
+ 850              		.cfi_offset 4, -8
+ 851              		.cfi_offset 14, -4
+ 852 0002 86B0     		sub	sp, sp, #24
+ 853              	.LCFI29:
+ 854              		.cfi_def_cfa_offset 32
+ 855 0004 0C46     		mov	r4, r1
+ 243:Core/Src/bno055.c ****     uint8_t buffer[6];
+ 856              		.loc 1 243 5 is_stmt 1 view .LVU241
+ARM GAS  /tmp/ccNPUzL4.s 			page 21
+
+
+ 244:Core/Src/bno055.c ****     HAL_StatusTypeDef status;
+ 857              		.loc 1 244 5 view .LVU242
+ 245:Core/Src/bno055.c ****     
+ 246:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Read(hi2c, BNO055_I2C_ADDR, BNO055_GRAVITY_DATA_X_LSB, 
+ 858              		.loc 1 246 5 view .LVU243
+ 859              		.loc 1 246 14 is_stmt 0 view .LVU244
+ 860 0006 4FF47A73 		mov	r3, #1000
+ 861 000a 0293     		str	r3, [sp, #8]
+ 862 000c 0623     		movs	r3, #6
+ 863 000e 0193     		str	r3, [sp, #4]
+ 864 0010 04AB     		add	r3, sp, #16
+ 865 0012 0093     		str	r3, [sp]
+ 866 0014 0123     		movs	r3, #1
+ 867 0016 2E22     		movs	r2, #46
+ 868 0018 5021     		movs	r1, #80
+ 869              	.LVL49:
+ 870              		.loc 1 246 14 view .LVU245
+ 871 001a FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 872              	.LVL50:
+ 247:Core/Src/bno055.c ****                                I2C_MEMADD_SIZE_8BIT, buffer, 6, BNO055_TIMEOUT);
+ 248:Core/Src/bno055.c ****     
+ 249:Core/Src/bno055.c ****     if (status == HAL_OK) {
+ 873              		.loc 1 249 5 is_stmt 1 view .LVU246
+ 874              		.loc 1 249 8 is_stmt 0 view .LVU247
+ 875 001e A0B9     		cbnz	r0, .L30
+ 250:Core/Src/bno055.c ****         gravity->x = (int16_t)((buffer[1] << 8) | buffer[0]);
+ 876              		.loc 1 250 9 is_stmt 1 view .LVU248
+ 877              		.loc 1 250 39 is_stmt 0 view .LVU249
+ 878 0020 9DF81120 		ldrb	r2, [sp, #17]	@ zero_extendqisi2
+ 879              		.loc 1 250 57 view .LVU250
+ 880 0024 9DF81030 		ldrb	r3, [sp, #16]	@ zero_extendqisi2
+ 881              		.loc 1 250 22 view .LVU251
+ 882 0028 43EA0223 		orr	r3, r3, r2, lsl #8
+ 883              		.loc 1 250 20 view .LVU252
+ 884 002c 2380     		strh	r3, [r4]	@ movhi
+ 251:Core/Src/bno055.c ****         gravity->y = (int16_t)((buffer[3] << 8) | buffer[2]);
+ 885              		.loc 1 251 9 is_stmt 1 view .LVU253
+ 886              		.loc 1 251 39 is_stmt 0 view .LVU254
+ 887 002e 9DF81320 		ldrb	r2, [sp, #19]	@ zero_extendqisi2
+ 888              		.loc 1 251 57 view .LVU255
+ 889 0032 9DF81230 		ldrb	r3, [sp, #18]	@ zero_extendqisi2
+ 890              		.loc 1 251 22 view .LVU256
+ 891 0036 43EA0223 		orr	r3, r3, r2, lsl #8
+ 892              		.loc 1 251 20 view .LVU257
+ 893 003a 6380     		strh	r3, [r4, #2]	@ movhi
+ 252:Core/Src/bno055.c ****         gravity->z = (int16_t)((buffer[5] << 8) | buffer[4]);
+ 894              		.loc 1 252 9 is_stmt 1 view .LVU258
+ 895              		.loc 1 252 39 is_stmt 0 view .LVU259
+ 896 003c 9DF81520 		ldrb	r2, [sp, #21]	@ zero_extendqisi2
+ 897              		.loc 1 252 57 view .LVU260
+ 898 0040 9DF81430 		ldrb	r3, [sp, #20]	@ zero_extendqisi2
+ 899              		.loc 1 252 22 view .LVU261
+ 900 0044 43EA0223 		orr	r3, r3, r2, lsl #8
+ 901              		.loc 1 252 20 view .LVU262
+ 902 0048 A380     		strh	r3, [r4, #4]	@ movhi
+ 903              	.L30:
+ 253:Core/Src/bno055.c ****     }
+ARM GAS  /tmp/ccNPUzL4.s 			page 22
+
+
+ 254:Core/Src/bno055.c ****     
+ 255:Core/Src/bno055.c ****     return status;
+ 904              		.loc 1 255 5 is_stmt 1 view .LVU263
+ 256:Core/Src/bno055.c **** }
+ 905              		.loc 1 256 1 is_stmt 0 view .LVU264
+ 906 004a 06B0     		add	sp, sp, #24
+ 907              	.LCFI30:
+ 908              		.cfi_def_cfa_offset 8
+ 909              		@ sp needed
+ 910 004c 10BD     		pop	{r4, pc}
+ 911              		.loc 1 256 1 view .LVU265
+ 912              		.cfi_endproc
+ 913              	.LFE143:
+ 915              		.section	.text.BNO055_GetCalibration,"ax",%progbits
+ 916              		.align	1
+ 917              		.global	BNO055_GetCalibration
+ 918              		.syntax unified
+ 919              		.thumb
+ 920              		.thumb_func
+ 922              	BNO055_GetCalibration:
+ 923              	.LVL51:
+ 924              	.LFB144:
+ 257:Core/Src/bno055.c **** 
+ 258:Core/Src/bno055.c **** /**
+ 259:Core/Src/bno055.c ****   * @brief  Get calibration status
+ 260:Core/Src/bno055.c ****   * @param  hi2c: pointer to I2C handle
+ 261:Core/Src/bno055.c ****   * @param  calib: pointer to store calibration status
+ 262:Core/Src/bno055.c ****   * @retval HAL status
+ 263:Core/Src/bno055.c ****   */
+ 264:Core/Src/bno055.c **** HAL_StatusTypeDef BNO055_GetCalibration(I2C_HandleTypeDef *hi2c, BNO055_CalibStatus_t *calib)
+ 265:Core/Src/bno055.c **** {
+ 925              		.loc 1 265 1 is_stmt 1 view -0
+ 926              		.cfi_startproc
+ 927              		@ args = 0, pretend = 0, frame = 8
+ 928              		@ frame_needed = 0, uses_anonymous_args = 0
+ 929              		.loc 1 265 1 is_stmt 0 view .LVU267
+ 930 0000 10B5     		push	{r4, lr}
+ 931              	.LCFI31:
+ 932              		.cfi_def_cfa_offset 8
+ 933              		.cfi_offset 4, -8
+ 934              		.cfi_offset 14, -4
+ 935 0002 86B0     		sub	sp, sp, #24
+ 936              	.LCFI32:
+ 937              		.cfi_def_cfa_offset 32
+ 938 0004 0C46     		mov	r4, r1
+ 266:Core/Src/bno055.c ****     uint8_t calib_stat;
+ 939              		.loc 1 266 5 is_stmt 1 view .LVU268
+ 267:Core/Src/bno055.c ****     HAL_StatusTypeDef status;
+ 940              		.loc 1 267 5 view .LVU269
+ 268:Core/Src/bno055.c ****     
+ 269:Core/Src/bno055.c ****     status = HAL_I2C_Mem_Read(hi2c, BNO055_I2C_ADDR, BNO055_CALIB_STAT_ADDR, 
+ 941              		.loc 1 269 5 view .LVU270
+ 942              		.loc 1 269 14 is_stmt 0 view .LVU271
+ 943 0006 4FF47A73 		mov	r3, #1000
+ 944 000a 0293     		str	r3, [sp, #8]
+ 945 000c 0123     		movs	r3, #1
+ 946 000e 0193     		str	r3, [sp, #4]
+ARM GAS  /tmp/ccNPUzL4.s 			page 23
+
+
+ 947 0010 0DF11702 		add	r2, sp, #23
+ 948 0014 0092     		str	r2, [sp]
+ 949 0016 3522     		movs	r2, #53
+ 950 0018 5021     		movs	r1, #80
+ 951              	.LVL52:
+ 952              		.loc 1 269 14 view .LVU272
+ 953 001a FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 954              	.LVL53:
+ 270:Core/Src/bno055.c ****                                I2C_MEMADD_SIZE_8BIT, &calib_stat, 1, BNO055_TIMEOUT);
+ 271:Core/Src/bno055.c ****     
+ 272:Core/Src/bno055.c ****     if (status == HAL_OK) {
+ 955              		.loc 1 272 5 is_stmt 1 view .LVU273
+ 956              		.loc 1 272 8 is_stmt 0 view .LVU274
+ 957 001e 60B9     		cbnz	r0, .L33
+ 273:Core/Src/bno055.c ****         calib->sys = (calib_stat >> 6) & 0x03;
+ 958              		.loc 1 273 9 is_stmt 1 view .LVU275
+ 959              		.loc 1 273 20 is_stmt 0 view .LVU276
+ 960 0020 9DF81730 		ldrb	r3, [sp, #23]	@ zero_extendqisi2
+ 961 0024 9A09     		lsrs	r2, r3, #6
+ 962 0026 2270     		strb	r2, [r4]
+ 274:Core/Src/bno055.c ****         calib->gyro = (calib_stat >> 4) & 0x03;
+ 963              		.loc 1 274 9 is_stmt 1 view .LVU277
+ 964              		.loc 1 274 41 is_stmt 0 view .LVU278
+ 965 0028 C3F30112 		ubfx	r2, r3, #4, #2
+ 966              		.loc 1 274 21 view .LVU279
+ 967 002c 6270     		strb	r2, [r4, #1]
+ 275:Core/Src/bno055.c ****         calib->accel = (calib_stat >> 2) & 0x03;
+ 968              		.loc 1 275 9 is_stmt 1 view .LVU280
+ 969              		.loc 1 275 42 is_stmt 0 view .LVU281
+ 970 002e C3F38102 		ubfx	r2, r3, #2, #2
+ 971              		.loc 1 275 22 view .LVU282
+ 972 0032 A270     		strb	r2, [r4, #2]
+ 276:Core/Src/bno055.c ****         calib->mag = calib_stat & 0x03;
+ 973              		.loc 1 276 9 is_stmt 1 view .LVU283
+ 974              		.loc 1 276 33 is_stmt 0 view .LVU284
+ 975 0034 03F00303 		and	r3, r3, #3
+ 976              		.loc 1 276 20 view .LVU285
+ 977 0038 E370     		strb	r3, [r4, #3]
+ 978              	.L33:
+ 277:Core/Src/bno055.c ****     }
+ 278:Core/Src/bno055.c ****     
+ 279:Core/Src/bno055.c ****     return status;
+ 979              		.loc 1 279 5 is_stmt 1 view .LVU286
+ 280:Core/Src/bno055.c **** }
+ 980              		.loc 1 280 1 is_stmt 0 view .LVU287
+ 981 003a 06B0     		add	sp, sp, #24
+ 982              	.LCFI33:
+ 983              		.cfi_def_cfa_offset 8
+ 984              		@ sp needed
+ 985 003c 10BD     		pop	{r4, pc}
+ 986              		.loc 1 280 1 view .LVU288
+ 987              		.cfi_endproc
+ 988              	.LFE144:
+ 990              		.text
+ 991              	.Letext0:
+ 992              		.file 2 "/usr/lib/gcc/arm-none-eabi/13.2.1/include/stdint.h"
+ 993              		.file 3 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f446xx.h"
+ARM GAS  /tmp/ccNPUzL4.s 			page 24
+
+
+ 994              		.file 4 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 995              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 996              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h"
+ 997              		.file 7 "Core/Inc/bno055.h"
+ 998              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ARM GAS  /tmp/ccNPUzL4.s 			page 25
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 bno055.c
+     /tmp/ccNPUzL4.s:21     .text.BNO055_SetMode:00000000 $t
+     /tmp/ccNPUzL4.s:27     .text.BNO055_SetMode:00000000 BNO055_SetMode
+     /tmp/ccNPUzL4.s:67     .text.BNO055_GetChipID:00000000 $t
+     /tmp/ccNPUzL4.s:73     .text.BNO055_GetChipID:00000000 BNO055_GetChipID
+     /tmp/ccNPUzL4.s:111    .text.BNO055_Init:00000000 $t
+     /tmp/ccNPUzL4.s:117    .text.BNO055_Init:00000000 BNO055_Init
+     /tmp/ccNPUzL4.s:326    .text.BNO055_ReadAccel:00000000 $t
+     /tmp/ccNPUzL4.s:332    .text.BNO055_ReadAccel:00000000 BNO055_ReadAccel
+     /tmp/ccNPUzL4.s:409    .text.BNO055_ReadGyro:00000000 $t
+     /tmp/ccNPUzL4.s:415    .text.BNO055_ReadGyro:00000000 BNO055_ReadGyro
+     /tmp/ccNPUzL4.s:492    .text.BNO055_ReadMag:00000000 $t
+     /tmp/ccNPUzL4.s:498    .text.BNO055_ReadMag:00000000 BNO055_ReadMag
+     /tmp/ccNPUzL4.s:575    .text.BNO055_ReadEuler:00000000 $t
+     /tmp/ccNPUzL4.s:581    .text.BNO055_ReadEuler:00000000 BNO055_ReadEuler
+     /tmp/ccNPUzL4.s:658    .text.BNO055_ReadQuaternion:00000000 $t
+     /tmp/ccNPUzL4.s:664    .text.BNO055_ReadQuaternion:00000000 BNO055_ReadQuaternion
+     /tmp/ccNPUzL4.s:750    .text.BNO055_ReadLinearAccel:00000000 $t
+     /tmp/ccNPUzL4.s:756    .text.BNO055_ReadLinearAccel:00000000 BNO055_ReadLinearAccel
+     /tmp/ccNPUzL4.s:833    .text.BNO055_ReadGravity:00000000 $t
+     /tmp/ccNPUzL4.s:839    .text.BNO055_ReadGravity:00000000 BNO055_ReadGravity
+     /tmp/ccNPUzL4.s:916    .text.BNO055_GetCalibration:00000000 $t
+     /tmp/ccNPUzL4.s:922    .text.BNO055_GetCalibration:00000000 BNO055_GetCalibration
+
+UNDEFINED SYMBOLS
+HAL_I2C_Mem_Write
+HAL_I2C_Mem_Read
+HAL_Delay
